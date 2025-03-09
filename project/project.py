@@ -1,40 +1,43 @@
-"""Welcome to Reflex! This file outlines the steps to create a basic app."""
-
 import reflex as rx
-
 from rxconfig import config
+from project.components.NavBar import navbar
+from project.components.SearchBar import search_bar
+from project.pages.HomePage import menu_year
+from project.pages.Register import register
+from project.pages.LogIn import login
 
+style = {
+    "::placeholder": {
+        "color": "#9AA7B2",
+    },
+}
 
-class State(rx.State):
-    """The app state."""
-
-    ...
-
-
-def index() -> rx.Component:
-    # Welcome Page (Index)
+def HomePage() -> rx.Component:
     return rx.container(
-        rx.color_mode.button(position="top-right"),
         rx.vstack(
-            rx.heading("Welcome to Reflex!", size="9"),
-            rx.text(
-                "Get started by editing ",
-                rx.code(f"{config.app_name}/{config.app_name}.py"),
-                size="5",
-            ),
-            rx.link(
-                rx.button("Check out our docs!"),
-                href="https://reflex.dev/docs/getting-started/introduction/",
-                is_external=True,
-            ),
-            spacing="5",
-            justify="center",
-            min_height="85vh",
+            navbar(), 
+            search_bar(),
+            menu_year(),
         ),
-        rx.logo(),
-        style={"background_color": "#ffffff"}
+        justify="center",
+        min_height="100vh", 
+        margin_top="70px", 
+        bg="white"
     )
 
+def register_page() -> rx.Component:
+    return rx.container(
+        register(),
+    )
+
+def index() -> rx.Component:
+    return rx.container(
+        register(),
+        # login(),
+        # HomePage(),
+        bg="white"
+    )
 
 app = rx.App()
+app = rx.App(style=style)
 app.add_page(index)
