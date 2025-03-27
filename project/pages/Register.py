@@ -1,114 +1,113 @@
 import reflex as rx
-
-class FormState(rx.State):
-    form_data: dict = {}
-
-    @rx.event
-    def handle_submit(self, form_data: dict):
-        """Handle the form submit."""
-        self.form_data = form_data
-
+from project.components.NavBar import navbar_link
+from project.state.formstate import FormState
 
 def register() -> rx.Component:
     return rx.box(
         # Desktop version
-        # rx.desktop_only(
-            rx.hstack(
-                rx.icon("menu", size=30), 
-                rx.heading(
-                    "StudySphere", size="7", weight="bold"
+        rx.hstack(
+            rx.button(
+                rx.icon("arrow_left", size=30),
+                rx.hstack(
+                    rx.text("Back", size="3")
                 ),
-                align_items="center",
+                bg="transparent",
+                border="none",
             ),
-            rx.hstack(
-                rx.text("Welcome to StudySphere!",size="5"),
-                align_items="center",
-                justify="center",
-                margin_top="12px"
+            margin="1.7rem",
+            margin_bottom="0",
+        ),
+        rx.hstack(
+            rx.image(src="/hat_icon.png", width="130px", height="auto"),
+            align_items="center",
+            justify="center",
+            margin_top="12px",
+        ),
+        rx.hstack(
+            rx.heading(
+                "StudySphere", size="7"
             ),
-            rx.vstack(
-                rx.form(
-                    rx.vstack(
-                        rx.text("Name",
-                        align_items="left",),
-                        rx.input(
-                            name="first_name",
-                            border_radius="20px",  
-                            border="none", 
-                            color="black",  
-                            background_color="#EFFAFF", 
-                            width="20rem",
-                            height="2.4rem",
-                        ),
-                        rx.text("Surname"),
-                        rx.input(
-                            name="last_name",
-                            border_radius="20px", 
-                            border="none",  
-                            color="black",  
-                            background_color="#EFFAFF", 
-                            width="20rem",
-                            height="2.4rem",
-                        ),
-                        rx.text("Gmail"),
-                        rx.input(
-                            name="gmail",
-                            border_radius="20px", 
-                            border="none", 
-                            color="black", 
-                            background_color="#EFFAFF", 
-                            width="20rem",
-                            height="2.4rem",
-                        ),
-                        rx.text("Password"),
-                        rx.input(
-                            name="password",
-                            border_radius="20px", 
-                            border="none", 
-                            color="black", 
-                            background_color="#EFFAFF",  
-                            width="20rem",
-                            height="2.4rem",
-                        ),                       
-                        rx.button(
-                            "Sign Up",
-                            type="submit",
-                            bg="#346579",  
-                            size="3",
-                            color="white",  
-                            border_radius="20px", 
-                            padding="0.5em 1em", 
-                            align_items="center",
-                            margin_left="6.8rem",
-                        ),
-                        
-                        justify="center",
-                        
+            align_items="center",
+            justify="center",
+        ),
+        rx.vstack(
+            rx.form(
+                rx.vstack(
+                    rx.text("First Name", font_size="16px", color="white"),
+                    rx.input(
+                        name="first_name",
+                        border_radius="20px",
+                        border="none",
+                        color="black",
+                        background_color="#EFFAFF",
+                        width="20rem",
+                        height="2.4rem",
+                        # padding="0.5rem",
                     ),
-                    on_submit=FormState.handle_submit,
-                    reset_on_submit=True,   
-                    width="320px"
+                    rx.text("Last Name", font_size="16px", color="white"),
+                    rx.input(
+                        name="last_name",
+                        border_radius="20px",
+                        border="none",
+                        color="black",
+                        background_color="#EFFAFF",
+                        width="20rem",
+                        height="2.4rem",
+                        # padding="0.5rem",
+                    ),
+                    rx.text("Gmail", font_size="16px", color="white"),
+                    rx.input(
+                        name="gmail",
+                        border_radius="20px",
+                        border="none",
+                        color="black",
+                        background_color="#EFFAFF",
+                        width="20rem",
+                        height="2.4rem",
+                        # padding="0.5rem",
+                    ),
+                    rx.text("Password", font_size="16px", color="white"),
+                    rx.input(
+                        name="password",
+                        type="password",
+                        border_radius="20px",
+                        border="none",
+                        color="black",
+                        background_color="#EFFAFF",
+                        width="20rem",
+                        height="2.4rem",
+                        # padding="0.5rem",
+                    ),
+                    rx.button(
+                        "Sign Up",
+                        type="submit",
+                        bg="#346579",
+                        size="3",
+                        color="white",
+                        border_radius="20px",
+                        padding="0.5em 1em",
+                        align_items="center",
+                        margin_left="6.8rem",
+                    ),
+                    justify="center",
                 ),
-                rx.text("Already have an account? Log in"),
-                # rx.divider(),
-                # rx.heading("Results"),
-                # rx.text(FormState.form_data.to_string()),
-                align_items="center",
-                justify="center",
-                margin_top="12px",
+                on_submit=FormState.handle_submit,
+                reset_on_submit=True,   
+                width="320px"
             ),
-                # ),
-        # Mobile and Tablet version
-        # rx.mobile_and_tablet(
-        #     rx.hstack(
-        #         rx.icon("menu", size=30),  # Menu icon
-        #         rx.heading(
-        #             "StudySphere", size="7", weight="bold"
-        #         ),
-        #         align_items="center",
-        #     ),
-        # ),
-        bg="#598DA2",  
+            align_items="center",
+            justify="center",
+            margin_top="12px",
+        ),
+        # Link for users who already have an account
+        rx.vstack(
+            rx.text("Already have an account?", font_size="16px", color="white"),
+            rx.link("Log in", href="/login", color="white", text_decoration = "underline", font_size="16px"),  # Redirect to login page
+            align_items="center",
+            justify="center",
+            margin_top="12px",
+        ),
+        bg="#598DA2",
         color="white", 
         padding="1em",
         min_height="100vh",

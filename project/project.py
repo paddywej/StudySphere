@@ -2,9 +2,9 @@ import reflex as rx
 from rxconfig import config
 from project.components.NavBar import navbar
 from project.components.SearchBar import search_bar
-from project.pages.HomePage import menu_year
-from project.pages.Register import register
-from project.pages.LogIn import login
+from project.pages.homepage import menu_year  # Ensure lowercase file name
+from project.pages.register import register
+from project.pages.login import login
 
 style = {
     "::placeholder": {
@@ -30,6 +30,11 @@ def register_page() -> rx.Component:
         register(),
     )
 
+def login_page() -> rx.Component:
+    return rx.container(
+        login(),
+    )
+
 def index() -> rx.Component:
     return rx.container(
         register(),
@@ -38,6 +43,10 @@ def index() -> rx.Component:
         bg="white"
     )
 
-app = rx.App()
 app = rx.App(style=style)
-app.add_page(index)
+
+# Add all pages properly
+app.add_page(index, route="/")
+app.add_page(register_page, route="/register")
+app.add_page(login_page, route="/login")
+app.add_page(HomePage, route="/home")
