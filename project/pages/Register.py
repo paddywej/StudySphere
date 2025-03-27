@@ -87,7 +87,7 @@ def register() -> rx.Component:
                         border_radius="20px",
                         padding="0.5em 1em",
                         align_items="center",
-                        margin_left="6.8rem",
+                        margin_left="7.2rem",
                     ),
                     justify="center",
                 ),
