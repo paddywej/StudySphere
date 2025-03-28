@@ -72,9 +72,10 @@ def assignments() -> rx.Component:
         
         width="100%",  # Ensure the container takes up full width
         padding="2em",  # Add padding around the container
-        position="relative",  # Position parent relative to allow "top" positioning
-        top="7rem",  # Adds space from the top of the screen/container
-        overflow="hidden",  # Prevent scrolling for the whole page
+        # position="relative",  # Position parent relative to allow "top" positioning
+        padding_top="7rem",  # Adds space from the top of the screen/container
+        # overflow="hidden",  # Prevent scrolling for the whole page
         margin_left="7rem",
-        min_height="100vh"
+        min_height="100vh",
+        bg="white",  # Correctly set the background color for the container
     )
