@@ -11,6 +11,7 @@ from project.pages.year3 import Year3
 from project.pages.year4 import Year4
 from project.pages.lecturepage import lecture
 from project.components.NavMenu import navmenu
+from project.pages.assignments_page import assignments
 
 style = {
     "::placeholder": {
@@ -46,8 +47,6 @@ def lecture_page()-> rx.Component:
         rx.vstack(
             navbar(),
             navmenu(),
-            
-
         ),
         justify="center",
         min_height="100vh", 
@@ -82,6 +81,17 @@ def year2() -> rx.Component:
         bg="white"
         
     )
+
+def assignments_page() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(), 
+            navmenu(),
+            assignments(),
+        ),
+        bg="white"
+        
+    )
 # def year3() -> rx.Component:
 #     return rx.container(
 #         Year3(),
@@ -99,3 +109,4 @@ app.add_page(login_page, route="/login")
 app.add_page(HomePage, route="/home")
 app.add_page(year1, route="/year1")
 app.add_page(year2, route="/year2")
+app.add_page(assignments_page, route="/assignments")
