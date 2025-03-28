@@ -9,6 +9,8 @@ from project.pages.year1 import Year1
 from project.pages.year2 import Year2
 from project.pages.year3 import Year3
 from project.pages.year4 import Year4
+from project.pages.lecturepage import lecture
+from project.components.NavMenu import navmenu
 
 style = {
     "::placeholder": {
@@ -39,11 +41,26 @@ def login_page() -> rx.Component:
         login(),
     )
 
+def lecture_page()-> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(),
+            navmenu(),
+            
+
+        ),
+        justify="center",
+        min_height="100vh", 
+        margin_top="70px", 
+        bg="white"
+    )
+
 def index() -> rx.Component:
     return rx.container(
-        register(),
+        # register(),
         # login(),
         # HomePage(),
+        lecture_page(),
         bg="white"
     )
 
