@@ -73,10 +73,15 @@ def year1() -> rx.Component:
         bg="white"
         
     )
-# def year2() -> rx.Component:
-#     return rx.container(
-#         Year2(),
-#     )
+def year2() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(), 
+            Year2(),
+        ),
+        bg="white"
+        
+    )
 # def year3() -> rx.Component:
 #     return rx.container(
 #         Year3(),
@@ -93,3 +98,4 @@ app.add_page(register_page, route="/register")
 app.add_page(login_page, route="/login")
 app.add_page(HomePage, route="/home")
 app.add_page(year1, route="/year1")
+app.add_page(year2, route="/year2")
