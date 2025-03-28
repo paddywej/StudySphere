@@ -37,7 +37,7 @@ def navbar() -> rx.Component:
                         rx.menu.content(
                             rx.menu.item("Settings"),
                             rx.menu.separator(),
-                            rx.menu.item("Log out"),
+                            rx.menu.item("Log out", on_click=rx.redirect("/login")),
                         ),
                         justify="end",
                     ),
