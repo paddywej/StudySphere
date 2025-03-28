@@ -9,7 +9,7 @@ from project.pages.year1 import Year1
 from project.pages.year2 import Year2
 from project.pages.year3 import Year3
 from project.pages.year4 import Year4
-from project.pages.lecturepage import lecture
+from project.pages.lecturepage import lectures
 from project.components.NavMenu import navmenu
 
 style = {
@@ -22,6 +22,7 @@ def HomePage() -> rx.Component:
     return rx.container(
         rx.vstack(
             navbar(), 
+            navmenu(),
             search_bar(),
             menu_year(),
         ),
@@ -47,7 +48,7 @@ def lecture_page()-> rx.Component:
             navbar(),
             navmenu(),
             
-
+            lectures(),
         ),
         justify="center",
         min_height="100vh", 
@@ -58,9 +59,9 @@ def lecture_page()-> rx.Component:
 def index() -> rx.Component:
     return rx.container(
         # register(),
-        # login(),
+        login(),
         # HomePage(),
-        lecture_page(),
+        # lectures(),
         bg="white"
     )
 
@@ -99,3 +100,4 @@ app.add_page(login_page, route="/login")
 app.add_page(HomePage, route="/home")
 app.add_page(year1, route="/year1")
 app.add_page(year2, route="/year2")
+app.add_page(lecture_page, route="/lectures")
