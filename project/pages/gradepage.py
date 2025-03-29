@@ -11,9 +11,9 @@ def grade_row(subject: str, score: int | None, grade: str | None) -> rx.Componen
     )
 
 def grades() -> rx.Component:
-    subjects = ["Software Engineering Principles", "Computer Networks", "Linear Algebra", "ADA"]
-    scores = {"Software Engineering Principles": 85, "Computer Networks": 90, "Linear Algebra": None, "ADA": None}
-    grades = {"Software Engineering Principles": "B", "Computer Networks": "A", "Linear Algebra": None, "ADA": None}
+    subjects = ["Mathematics", "Science", "English", "History"]
+    scores = {"Mathematics": 85, "Science": 90, "English": None, "History": None}
+    grades = {"Mathematics": "B", "Science": "A", "English": None, "History": None}
     
     return rx.center(
         rx.vstack(
