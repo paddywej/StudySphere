@@ -1,32 +1,53 @@
 import reflex as rx
+import requests
 
-def create_container(title: str) -> rx.Component:
-    """Creates a scrollable container with space for semester titles."""
+def get_subjects(year: int, semester: int):
+    url = f"http://localhost:8000/subjects/{year}/{semester}" 
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()  
+    else:
+        return []
+
+def create_container(title: str, subjects: list) -> rx.Component:
+    """Creates a scrollable container with subject buttons."""
     return rx.box(
-        # Title for the semester (Semester 1 or Semester 2)
-        rx.text(title, font_size="18px", font_weight="bold", color="white"),
-        # Content that will exceed the container to make it scrollable
+        rx.text(title, font_size="24px", font_weight="bold", color="white", text_align="center", margin_bottom="1rem"),  # Centered title text
         rx.vstack(
-            *[rx.box(f"Button {i}", padding="10px", background_color="#f8f8f8", border_radius="5px") for i in range(10)],  # Add more buttons to create overflow
-            spacing="9"
+            *[rx.button(
+                name, 
+                padding="15px",  
+                background_color="#F4F3F2", 
+                color="black", 
+                border_radius="0",
+                width="100%",
+                height="65px",
+                _hover={"bg": "#FFEFD0"} 
+            ) for name in subjects],
+            spacing="2", 
+            align_items="center" 
         ),
-        height="450px",  # Container height
-        width="550px",  # Same width for both containers
-        background_color="#598da2",  # Container background color
-        border_radius="25px",  # Increased border radius for more rounded corners
-        padding="20px",  # Padding inside the container
-        overflow_y="scroll",  # Enable vertical scrolling when content overflows
+        height="450px",
+        width="550px",
+        background_color="#598da2",
+        border_radius="25px",
+        padding="20px",
+        overflow_y="scroll",
     )
 
+
 def Year1() -> rx.Component:
-    """Creates the main page layout with two scrollable containers for Semester 1 and Semester 2."""
+    """Creates the main page layout with scrollable containers for Semester 1 and 2."""
+    semester_1_subjects = get_subjects(1, 1) 
+    semester_2_subjects = get_subjects(1, 2)  
+
     return rx.box(
         rx.vstack(
-            rx.text("Year 1", font_size="24px", font_weight="bold", color="#598da2"),
+            rx.text("Year 1", font_size="35px", font_weight="bold", color="#598da2", text_align="center"),  # Centered title text
             rx.hstack(
-                create_container("Semester 1"),  # First container with Semester 1
-                create_container("Semester 2"),  # Second container with Semester 2
-                spacing="9",  # Space between containers
+                create_container("Semester 1", semester_1_subjects),
+                create_container("Semester 2", semester_2_subjects),
+                spacing="9",
                 align="center"
             ),
             spacing="9",

@@ -1,9 +1,10 @@
 from fastapi import FastAPI, Depends, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
-import models, schemas
-from database import engine, Base 
+from . import models, schemas
+from .database import engine, Base 
 from fastapi.middleware.cors import CORSMiddleware
-
+from .database import SessionLocal, get_db
+from .models import *
 
 app = FastAPI()
 
@@ -16,14 +17,6 @@ app.add_middleware(
 )
 
 Base.metadata.create_all(bind=engine)
-
-# Dependency for Database Sessions
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @app.websocket("/_event/")
 async def websocket_endpoint(websocket: WebSocket):
@@ -72,3 +65,9 @@ def get_subject(subject_id: int, db: Session = Depends(get_db)):
     if subject is None:
         raise HTTPException(status_code=404, detail="Subject not found")
     return subject
+
+@app.get("/subjects/{year}/{semester}")
+def get_subjects(year: int, semester: int, db: Session = Depends(get_db)):
+    """Fetch subjects based on year and semester."""
+    subjects = db.query(Subject).filter(Subject.year == year, Subject.semester == semester).all()
+    return [subject.subject_name for subject in subjects] 

@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-from database import Base
+from .database import Base
 import datetime
+
 
 # Student Table
 class Student(Base):
@@ -10,8 +11,9 @@ class Student(Base):
     student_id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False)
-    year_level = Column(String, nullable=False)  # e.g., Year 1, Year 2
-
+    year = Column(String, nullable=False)  
+    track = Column(String, nullable=True) 
+    
     grades = relationship("Grade", back_populates="student")
 
 # Professor Table
@@ -70,8 +72,9 @@ class Grade(Base):
 class Subject(Base):
     __tablename__ = "subjects"
 
-    subject_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    subject_id = Column(String, primary_key=True, index=True)  # Use String instead of Integer
     subject_name = Column(String, nullable=False)
     year = Column(Integer, nullable=False)
     semester = Column(Integer, nullable=False)
-    credits = Column(Integer, nullable=False) 
+    credits = Column(Integer, nullable=False)
+

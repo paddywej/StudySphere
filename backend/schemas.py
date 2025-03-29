@@ -2,19 +2,24 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 
-# Student Schema
+# Student Base Schema
 class StudentBase(BaseModel):
     name: str
     email: str
     year_level: str
+    track: str | None = None  # track is nullable, only applicable for years 3 and 4
 
+# Schema for creating a student (input data)
 class StudentCreate(StudentBase):
     pass
 
+# Schema for responding with a student's data (includes student_id)
 class StudentResponse(StudentBase):
     student_id: int
+
     class Config:
-        from_attributes = True
+        from_attributes = True  # Tells Pydantic to support the ORM models' attributes
+
 
 # Professor Schema
 class ProfessorBase(BaseModel):
@@ -61,18 +66,21 @@ class GradeResponse(GradeBase):
     class Config:
         from_attributes = True
 
-# Subject Schema
+# Subject Base Schema
 class SubjectBase(BaseModel):
     subject_name: str
     year: int
     semester: int
-    credits: int  
+    credits: int
+    track: Optional[str] = None  # Optional track field to accommodate subjects without track
 
+# Schema for creating new subjects (can be used when inserting data)
 class SubjectCreate(SubjectBase):
     pass
 
+# Schema for returning a subject response (can be used in API responses)
 class SubjectResponse(SubjectBase):
-    subject_id: int
+    subject_id: str  # Use str for subject_id (since it's a string in the database)
 
     class Config:
         from_attributes = True
