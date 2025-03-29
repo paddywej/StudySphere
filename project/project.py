@@ -14,6 +14,8 @@ from project.pages.materialpage import materials
 from project.components.NavMenu import navmenu
 from project.pages.assignments_page import assignments
 from project.pages.quizpage import quiz
+from project.pages.exampage import exam
+
 
 style = {
     "::placeholder": {
@@ -97,6 +99,19 @@ def quiz_page() -> rx.Component:
         bg="white"
     )
 
+def exam_page() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(),
+            navmenu(),
+            exam(),
+        ),
+        justify="center",
+        min_height="100vh", 
+        margin_top="10px", 
+        bg="white"
+    )
+
 def index() -> rx.Component:
     return rx.container(
         # register(),
@@ -146,3 +161,4 @@ app.add_page(assignments_page, route="/assignments")
 app.add_page(lecture_page, route="/lectures")
 app.add_page(material_page, route="/materials")
 app.add_page(quiz_page, route="/quiz")
+app.add_page(exam_page, route="/exam")

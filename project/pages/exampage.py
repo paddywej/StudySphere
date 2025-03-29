@@ -26,9 +26,11 @@ def exam_item(name: str, exam_date: str, status: str, exam_time: str) -> rx.Comp
 def exam() -> rx.Component:
     # Sample list of exams to display
     exams_list = [
-        {"name": "Mathematics Final", "exam_date": "2025-05-10", "status": "upcoming", "exam_time": "09:00 AM - 11:00 AM"},
-        {"name": "Physics Midterm", "exam_date": "2025-04-15", "status": "completed", "exam_time": "02:00 PM - 04:00 PM"},
-        {"name": "History Exam", "exam_date": "2025-06-01", "status": "upcoming", "exam_time": "10:00 AM - 12:00 PM"},
+        {"name": "SEP Final", "exam_date": "2025-05-10", "status": "upcoming", "exam_time": "09:00 AM - 11:00 AM"},
+        {"name": "Computer Network Final", "exam_date": "2025-04-15", "status": "completed", "exam_time": "02:00 PM - 04:00 PM"},
+        {"name": "Linear Algebra Final", "exam_date": "2025-06-01", "status": "upcoming", "exam_time": "10:00 AM - 12:00 PM"},
+        {"name": "ADA Final", "exam_date": "2025-05-10", "status": "upcoming", "exam_time": "09:00 AM - 11:00 AM"},
+        {"name": "??? Final", "exam_date": "2025-05-10", "status": "upcoming", "exam_time": "09:00 AM - 11:00 AM"},
     ]
     
     return rx.container(
@@ -45,7 +47,7 @@ def exam() -> rx.Component:
                 bg="#D0E2EB",
                 color="black",
                 padding="1em",
-                overflow="auto",
+                overflow="auto",  # Ensures the scrollbar appears when content exceeds the box height
                 border_radius="25px",
                 margin_right="2rem",
             ),
@@ -61,7 +63,7 @@ def exam() -> rx.Component:
                 bg="#D0E2EB",
                 color="black",
                 padding="1em",
-                overflow="auto",
+                overflow="auto",  # Ensures the scrollbar appears when content exceeds the box height
                 border_radius="25px",
             ),
             spacing="4",
