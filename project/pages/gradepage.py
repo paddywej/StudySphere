@@ -21,18 +21,13 @@ def grades() -> rx.Component:
     scores = {"10000": 85, "10001": 90, "10002": None, "10003": None}
     grades = {"10000": "B", "10001": "A", "10002": None, "10003": None}
     
-    # Determine the maximum length of text in each column, including headers
     column_widths = {
-        "id": max(len(id) for id in subject_id + ["Subject ID"]),  # longest Subject ID or header
-        "subject": max(len(subject) for subject in list(subjects.values()) + ["Subject"]),  # longest subject name or header
-        "score": max(len(str(score)) if score is not None else 1 for score in list(scores.values()) + ["Score"]),  # longest score or header
-        "grade": max(len(grade) if grade is not None else 1 for grade in list(grades.values()) + ["Grade"]),  # longest grade or header
+        "id": "120px",
+        "subject": "180px",
+        "score": "100px",
+        "grade": "100px",
     }
-    
-    # Add some padding to each column width to ensure space around the content
-    column_widths = {key: str(value * 15 + 25) + "px" for key, value in column_widths.items()}
 
-    # Now we can expand the table to take up the full width, but the individual columns should still follow the widths
     return rx.center(
         rx.vstack(
             rx.text("Grades", size="6", weight="bold", color="#598da2"),
@@ -53,12 +48,45 @@ def grades() -> rx.Component:
                 ),
                 *[grade_row(id, subjects.get(id), scores.get(id), grades.get(id), column_widths) for id in subject_id],
                 border="1px solid #ddd",
-                width="100%",  # Table now takes full width
+                width="100%",
                 border_radius="10px",
                 overflow="hidden",
                 shadow="lg",
                 padding="10px",
                 bg="white"
+            ),
+            rx.hstack(
+                rx.link(
+                    rx.button(
+                        "Add Score", 
+                        padding="15px", 
+                        background_color="#6EA9C5", 
+                        color="white", 
+                        width="150px", 
+                        height="50px", 
+                        border_radius="10px", 
+                        weight="bold"
+                    ),
+                    href="/add_score",
+                ),
+                rx.link(
+                    rx.button(
+                        "Edit Score", 
+                        padding="15px", 
+                        background_color="#6EA9C5", 
+                        color="white", 
+                        width="150px", 
+                        height="50px", 
+                        border_radius="10px", 
+                        weight="bold"
+                    ),
+                    href="/edit_score",
+                ),
+                spacing="6",
+                justify="center",
+                align_items="center",
+                margin_top="20px",
+                width="100%",
             ),
             spacing="6",
             align="center",
