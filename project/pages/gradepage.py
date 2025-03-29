@@ -43,6 +43,6 @@ def grades() -> rx.Component:
         width="100%",
         padding="2em",
         margin_left="7rem",
-        min_height="100vh",
+        min_height="90vh",
         bg="white",
     )
