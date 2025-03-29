@@ -23,55 +23,119 @@ class AssignmentState(rx.State):
             rx.window_alert(f"Unsubmitted: {self.user_file}")
             self.user_file = ""  # Reset file after unsubmission
 
-def assignment_details() -> rx.Component:
-    """Dynamic assignment page."""
-    return rx.container(
+def create_container(title: str, items: list) -> rx.Component:
+    """Creates a scrollable container for assignment-related content."""
+    return rx.box(
+        # Title for the section (Assignment File or Your Work)
+        rx.text(title, font_size="18px", font_weight="bold", color="#1d2023"),
+        # Content that will exceed the container to make it scrollable
         rx.vstack(
-            rx.text(f"{AssignmentState.assignment_title}: Due {AssignmentState.due_date}", 
-                    size="5", weight="bold", color="#6EA9C5"),
+            *[rx.box(item, padding="8px", background_color="#f8f8f8", border_radius="5px") for item in items],
+            spacing="9"
+        ),
+        height="450px",  # Container height
+        width="450px",  # Width for better centering
+        background_color="#d0e2eb",  # Container background color
+        border_radius="25px",  # Increased border radius for more rounded corners
+        padding="10px",  # Reduced padding inside the container
+        overflow_y="scroll",  # Enable vertical scrolling when content overflows
+    )
+
+def assignment_details() -> rx.Component:
+    """Dynamic assignment page with scrollable containers."""
+    return rx.box(
+        rx.vstack(
+            # Page Title
+            rx.text("Assignment Details", font_size="24px", font_weight="bold", color="#598da2"),
             
+            # Assignment information and action buttons
             rx.hstack(
                 # Assignment File Box
-                rx.box(
-                    rx.text("Assignment File", size="4", weight="bold"),
-                    rx.button(AssignmentState.assignment_file, 
-                              size="3", width="90%", padding="1em", 
-                              bg="#EFFAFF", border_radius="8px"),
-                    bg="#D0E2EB", color="black", padding="2em", 
-                    border_radius="15px", width="45%", height="300px"
-                ),
-
+                create_container("Assignment File", [AssignmentState.assignment_file]),
                 # Your Work Box
-                rx.box(
-                    rx.text("Your Work", size="4", weight="bold"),
-                    
-                    # Upload Section
-                    rx.input(placeholder="Upload your file", 
-                             on_change=AssignmentState.upload_file),
-                    
-                    rx.button("Upload", 
-                              on_click=lambda: rx.window_alert("File uploaded"), 
-                              size="3", width="90%", padding="1em", 
-                              bg="#EFFAFF", border_radius="8px"),
-                    
-                    # Submission Actions
-                    rx.hstack(
-                        rx.button("Submit", 
-                                  on_click=AssignmentState.submit, 
-                                  bg="#6EA9C5", color="white", 
-                                  padding="0.5em 1em", border_radius="8px"),
-                        rx.button("Unsubmit", 
-                                  on_click=AssignmentState.unsubmit, 
-                                  bg="#6EA9C5", color="white", 
-                                  padding="0.5em 1em", border_radius="8px"),
-                        spacing="1"
-                    ),
-                    bg="#D0E2EB", color="black", padding="2em", 
-                    border_radius="15px", width="45%", height="300px"
-                ),
-                spacing="2"
+                create_container("Your Work", []),  # No need for content here, just the layout
+                spacing="9",  # Space between the boxes
+                justify="center",  # Center the containers horizontally
             ),
-            spacing="2"
+            
+            # Upload, Submit, Unsubmit buttons below the containers
+            rx.vstack(
+                rx.button(
+                    "Upload your file", 
+                    padding="15px", 
+                    background_color="#6EA9C5", 
+                    color="white", 
+                    width="200px", 
+                    height="50px", 
+                    border_radius="10px", 
+                    weight="bold",
+                    on_click=lambda: AssignmentState.upload_file("sample_file.pdf")  # Trigger file upload (example)
+                ),
+                rx.button(
+                    "Submit", 
+                    padding="15px", 
+                    background_color="#6EA9C5", 
+                    color="white", 
+                    width="200px", 
+                    height="50px", 
+                    border_radius="10px", 
+                    weight="bold",
+                    on_click=lambda: AssignmentState.submit()  # Trigger submission
+                ),
+                rx.button(
+                    "Unsubmit", 
+                    padding="15px", 
+                    background_color="#6EA9C5", 
+                    color="white", 
+                    width="200px", 
+                    height="50px", 
+                    border_radius="10px", 
+                    weight="bold",
+                    on_click=lambda: AssignmentState.unsubmit()  # Trigger unsubmission
+                ),
+                spacing="2",  # Space between buttons
+                justify="end",  # Center the buttons horizontally
+                margin_left="50rem",
+                margin_top="0px",  # Space between containers and buttons
+            ),
+            
+            # Add Assignment and Edit Assignment buttons
+            rx.vstack(
+                rx.button(
+                    "Add Assignment", 
+                    padding="15px", 
+                    background_color="#6EA9C5", 
+                    color="white", 
+                    width="200px", 
+                    height="50px", 
+                    border_radius="10px", 
+                    weight="bold",
+                    on_click=lambda: rx.window_alert("Add Assignment Clicked")  # Trigger Add Assignment action
+                ),
+                rx.button(
+                    "Edit Assignment", 
+                    padding="15px", 
+                    background_color="#6EA9C5", 
+                    color="white", 
+                    width="200px", 
+                    height="50px", 
+                    border_radius="10px", 
+                    weight="bold",
+                    on_click=lambda: rx.window_alert("Edit Assignment Clicked")  # Trigger Edit Assignment action
+                ),
+                spacing="2",  # Space between buttons
+                justify="end",  # Align the buttons to the right
+                margin_left="50rem",
+                margin_top="10px",  # Space between action buttons and new buttons
+            ),
+            spacing="9",  # Space between the title and materials content
+            align_items="center",  # Align everything in the center
         ),
-        padding="2em", width="100%", align="center"
+        width="100%",
+        min_height="100vh",
+        display="flex",
+        justify_content="center",  # Center everything horizontally
+        align_items="center",  # Center everything vertically
+        margin_top="90px",
+        margin_left="90px", 
     )
