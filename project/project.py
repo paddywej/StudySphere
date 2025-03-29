@@ -15,6 +15,7 @@ from project.components.NavMenu import navmenu
 from project.pages.assignments_page import assignments
 from project.pages.quizpage import quiz
 from project.pages.exampage import exam
+from project.pages.gradepage import grades
 
 
 style = {
@@ -112,6 +113,19 @@ def exam_page() -> rx.Component:
         bg="white"
     )
 
+def grade_page() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(),
+            navmenu(),
+            grades(),
+        ),
+        justify="center",
+        min_height="100vh", 
+        margin_top="10px", 
+        bg="white"
+    )
+
 def index() -> rx.Component:
     return rx.container(
         # register(),
@@ -162,3 +176,4 @@ app.add_page(lecture_page, route="/lectures")
 app.add_page(material_page, route="/materials")
 app.add_page(quiz_page, route="/quiz")
 app.add_page(exam_page, route="/exam")
+app.add_page(grade_page, route="/grades")
