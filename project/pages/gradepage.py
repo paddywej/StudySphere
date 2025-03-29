@@ -67,7 +67,6 @@ def grades() -> rx.Component:
                         border_radius="10px", 
                         weight="bold"
                     ),
-                    href="/add_score",
                 ),
                 rx.link(
                     rx.button(
@@ -80,7 +79,6 @@ def grades() -> rx.Component:
                         border_radius="10px", 
                         weight="bold"
                     ),
-                    href="/edit_score",
                 ),
                 spacing="6",
                 justify="center",
