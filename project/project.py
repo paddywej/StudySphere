@@ -13,6 +13,7 @@ from project.pages.lecturepage import lectures
 from project.pages.materialpage import materials
 from project.components.NavMenu import navmenu
 from project.pages.assignments_page import assignments
+from project.pages.assignment_details import assignment_details
 from project.pages.quizpage import quiz
 from project.pages.exampage import exam
 from project.pages.gradepage import grades
@@ -67,6 +68,19 @@ def assignments_page() -> rx.Component:
             navbar(), 
             navmenu(),
             assignments(),
+        ),
+        justify="center",
+        min_height="100vh", 
+        margin_top="10px", 
+        bg="white"
+    )
+
+def assignment_details_page() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(), 
+            navmenu(),
+            assignment_details(),
         ),
         justify="center",
         min_height="100vh", 
@@ -172,6 +186,7 @@ app.add_page(HomePage, route="/home")
 app.add_page(year1, route="/year1")
 app.add_page(year2, route="/year2")
 app.add_page(assignments_page, route="/assignments")
+app.add_page(assignment_details_page, route="/assignment_details/[assignment_id]")
 app.add_page(lecture_page, route="/lectures")
 app.add_page(material_page, route="/materials")
 app.add_page(quiz_page, route="/quiz")

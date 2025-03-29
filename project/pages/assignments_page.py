@@ -1,81 +1,85 @@
 import reflex as rx
 
-def assignment_item(name: str, due_date: str, status: str) -> rx.Component:
-    # Dynamically create an assignment item with status-based background color
+def assignment_item(assignment_id: str, name: str, due_date: str, status: str) -> rx.Component:
+    # Background color based on status
     status_colors = {
-        "new": "#EFFAFF",  # Light blue for new
-        "viewed": "#D3F8E2",  # Light green for viewed
-        "done": "#D1E7F8",  # Light blue for done
+        "new": "#EFFAFF",   # Light blue for new
+        "viewed": "#D3F8E2", # Light green for viewed
+        "done": "#D1E7F8",   # Light blue for done
     }
-    return rx.box(
-        rx.vstack(
-            rx.text(f"{name}", size="3", weight="bold"),
-            rx.text(f"Due: {due_date}", size="2"),
-            rx.text(f"Status: {status.capitalize()}", size="2", color="gray"),
-            spacing="1",  # Space between text lines
+    
+    return rx.link(
+        rx.box(
+            rx.vstack(
+                rx.text(name, size="3", weight="bold"),
+                rx.text(f"Due: {due_date}", size="2"),
+                rx.text(f"Status: {status.capitalize()}", size="2", color="gray"),
+                spacing="1",
+            ),
+            bg=status_colors.get(status, "#EFFAFF"),
+            color="black",
+            padding="1em",
+            border_radius="8px",
+            width="100%",
+            shadow="md",
+            _hover={"bg": "#BFD9E5"},
         ),
-        bg=status_colors.get(status, "#EFFAFF"),  # Default to light blue for new
-        color="black",  # Text color
-        padding="1em",
-        border_radius="8px",  # Round corners
-        width="100%",  # Full width of the box
-        margin_bottom="1em",  # Space between items
-        shadow="md",  # Optional shadow for the box
+        href=f"/assignment_details/{assignment_id}",
+        width="100%",
+        text_decoration="none",
     )
 
 def assignments() -> rx.Component:
-    # Sample list of assignments to display
+    # Sample list of assignments with unique IDs
     assignments_list = [
-        {"name": "Math Homework 1", "due_date": "2025-03-29", "status": "new"},
-        {"name": "Science Project", "due_date": "2025-04-02", "status": "viewed"},
-        {"name": "History Essay", "due_date": "2025-03-25", "status": "done"},
-        # Add more assignments here as needed
+        {"id": "math_hw_1", "name": "Math Homework 1", "due_date": "2025-03-29", "status": "new"},
+        {"id": "science_proj", "name": "Science Project", "due_date": "2025-04-02", "status": "viewed"},
+        {"id": "history_essay", "name": "History Essay", "due_date": "2025-03-25", "status": "done"},
     ]
     
     return rx.container(
-        rx.hstack(  # Create a horizontal stack (two columns)
-            rx.box(  # Unfinished assignments (scrollable)
+        rx.hstack(
+            # Unfinished Assignments
+            rx.box(
                 rx.vstack(
                     rx.text("Unfinished Assignments", size="4", weight="bold"),
-                    *[assignment_item(assignment["name"], assignment["due_date"], assignment["status"]) for assignment in assignments_list if assignment["status"] != "done"],
-                    spacing="2",  # Space between items
-                    width="100%",  # Ensure it takes full width of the box
+                    *[assignment_item(a["id"], a["name"], a["due_date"], a["status"]) for a in assignments_list if a["status"] != "done"],
+                    spacing="2",
+                    width="100%",
                 ),
-                width="45%",  # Slightly smaller width for the boxes
-                height="500px",  # Controlled height for the box
-                bg="#D0E2EB",  # Background color
-                color="black",  # Text color
+                width="45%",
+                height="500px",
+                bg="#D0E2EB",
+                color="black",
                 padding="1em",
-                overflow="auto",  # Enable scrolling if content exceeds box height
-                border_radius="25px",  # Round corners
-                margin_right="2rem",  # Space between the two boxes
+                overflow="auto",
+                border_radius="25px",
+                margin_right="2rem",
             ),
-            rx.box(  # Done assignments (scrollable)
+            # Done Assignments
+            rx.box(
                 rx.vstack(
                     rx.text("Done Assignments", size="4", weight="bold"),
-                    *[assignment_item(assignment["name"], assignment["due_date"], assignment["status"]) for assignment in assignments_list if assignment["status"] == "done"],
-                    spacing="2",  # Space between items
-                    width="100%",  # Ensure it takes full width of the box
+                    *[assignment_item(a["id"], a["name"], a["due_date"], a["status"]) for a in assignments_list if a["status"] == "done"],
+                    spacing="2",
+                    width="100%",
                 ),
-                width="45%",  # Slightly smaller width for the boxes
-                height="500px",  # Controlled height for the box
-                bg="#D0E2EB",  # Background color
-                color="black",  # Text color
+                width="45%",
+                height="500px",
+                bg="#D0E2EB",
+                color="black",
                 padding="1em",
-                overflow="auto",  # Enable scrolling if content exceeds box height
-                border_radius="25px",  # Round corners
+                overflow="auto",
+                border_radius="25px",
             ),
-            spacing="4",  # Increase space between columns
-            justify="center",  # Center both boxes horizontally
-            width="100%",  # Ensure the container takes up full width
+            spacing="4",
+            justify="center",
+            width="100%",
         ),
-        
-        width="100%",  # Ensure the container takes up full width
-        padding="2em",  # Add padding around the container
-        # position="relative",  # Position parent relative to allow "top" positioning
-        padding_top="7rem",  # Adds space from the top of the screen/container
-        # overflow="hidden",  # Prevent scrolling for the whole page
+        width="100%",
+        padding="2em",
+        padding_top="7rem",
         margin_left="7rem",
         min_height="100vh",
-        bg="white",  # Correctly set the background color for the container
+        bg="white",
     )
