@@ -1,11 +1,11 @@
 import reflex as rx
 
-def create_container(lecture_number: int, lecture_date: str) -> rx.Component:
-    """Creates a container with the lecture number, date, and space for a video."""
+def create_container(lecture_date: str) -> rx.Component:
+    """Creates a container with the lecture videos label, date, and space for a video."""
     return rx.box(
-        # Lecture number and date
-        rx.text(f"Lecture {lecture_number}", font_size="18px", font_weight="bold", color="white"),
-        rx.text(f"Date: {lecture_date}", font_size="14px", color="white"),
+        # Lecture videos label and date
+        rx.text("Lecture Videos", font_size="19px", font_weight="bold", color="white"),
+        # rx.text(f"Date: {lecture_date}", font_size="14px", color="white"),
         
         # Placeholder for video
         rx.box(
@@ -25,10 +25,14 @@ def create_container(lecture_number: int, lecture_date: str) -> rx.Component:
         margin_top="90px",  # Space above the container
     )
 
-def lectures() -> rx.Component:
-    """Creates the main page layout with a single container for a lecture and action buttons horizontally below."""
+def lectures(subject_title: str) -> rx.Component:
+    """Creates the main page layout with a single container for lecture videos and action buttons horizontally below."""
     return rx.vstack(  # Use vstack to stack the container and buttons vertically
-        create_container(1, "2025-03-28"),  # Calls the create_container function for lecture 1 with a date
+        
+        # Dynamic Subject Title outside the container
+        rx.text(subject_title, font_size="24px", font_weight="bold", color="#598da2", text_align="center"),
+        
+        create_container("2025-03-28"),  # Calls the create_container function with a date
         
         # Stack of buttons for uploading, editing, and deleting lectures
         rx.hstack(  # Use hstack for horizontal alignment of the buttons
@@ -83,10 +87,10 @@ def lectures() -> rx.Component:
     )
 
 # Outer container styling (full page)
-def outer_layout() -> rx.Component:
+def outer_layout(subject_title: str) -> rx.Component:
     """Outer container for full page layout"""
     return rx.box(
-        lectures(),
+        lectures(subject_title),
         width="100%",
         min_height="100vh",
         display="flex",

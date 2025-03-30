@@ -24,8 +24,9 @@ def navmenu() -> rx.Component:
             navmenu_link("Quiz", "/quiz"),
             navmenu_link("Exam", "/exam"),
             navmenu_link("Grades", "/grades"),
+            navmenu_link("Manage Students", "/manage_students"),
             
-            navmenu_link("Back to Home", "/home", margin_top="90px"),  # Pass margin_top here
+            navmenu_link("Back to Home", "/home", margin_top="30px"),  # Pass margin_top here
             
             align_items="start",
             spacing="4",

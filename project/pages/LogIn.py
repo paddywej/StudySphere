@@ -4,19 +4,6 @@ from project.state.formstate import FormState
 
 def login() -> rx.Component:
     return rx.box(
-        # Desktop version
-        rx.hstack(
-            rx.button(
-                rx.icon("arrow_left", size=30),
-                rx.hstack(
-                    rx.text("Back", size="3", weight="bold")
-                ),
-                bg="transparent",
-                border="none",
-            ),
-            margin="1.7rem",
-            margin_bottom="0",
-        ),
         rx.hstack(
             rx.image(src="/hat_icon.png", width="130px", height="auto"),
             align_items="center",

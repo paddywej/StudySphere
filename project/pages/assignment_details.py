@@ -126,7 +126,7 @@ def assignment_details() -> rx.Component:
                 spacing="2",  # Space between buttons
                 justify="end",  # Align the buttons to the right
                 margin_left="50rem",
-                margin_top="10px",  # Space between action buttons and new buttons
+                # margin_top="10px",  # Space between action buttons and new buttons
             ),
             spacing="9",  # Space between the title and materials content
             align_items="center",  # Align everything in the center
