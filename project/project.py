@@ -16,6 +16,7 @@ from project.pages.assignments_page import assignments
 from project.pages.assignment_details import assignment_details
 from project.pages.quizpage import quiz
 from project.pages.exampage import exam
+from project.pages.examdetailpage import exam_details
 from project.pages.gradepage import grades
 from project.pages.manage_students import manage_students
 
@@ -129,6 +130,19 @@ def exam_page() -> rx.Component:
         bg="white"
     )
 
+def exam_detail_page() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(),
+            navmenu(),
+            exam_details(),
+        ),
+        justify="center",
+        min_height="100vh", 
+        margin_top="10px", 
+        bg="white"
+    )
+
 def grade_page() -> rx.Component:
     return rx.container(
         rx.vstack(
@@ -205,5 +219,8 @@ app.add_page(lecture_page, route="/lectures")
 app.add_page(material_page, route="/materials")
 app.add_page(quiz_page, route="/quiz")
 app.add_page(exam_page, route="/exam")
+app.add_page(exam_detail_page, route="/exam_details/[exam_id]")
 app.add_page(grade_page, route="/grades")
 app.add_page(manage_students_page, route="/manage_students")
+
+
