@@ -1,12 +1,12 @@
 import reflex as rx
 
+
 def exam_item(exam_id: str, name: str, exam_date: str, status: str, exam_time: str) -> rx.Component:
-    # Status-based background colors
     status_colors = {
-        "upcoming": "#EFFAFF",  # Light blue for upcoming exams
-        "completed": "#D3F8E2",  # Light green for completed exams
+        "upcoming": "#EFFAFF",
+        "completed": "#D3F8E2",
     }
-    
+   
     return rx.link(
         rx.box(
             rx.vstack(
@@ -25,17 +25,18 @@ def exam_item(exam_id: str, name: str, exam_date: str, status: str, exam_time: s
             shadow="md",
             _hover={"bg": "#BFD9E5"},
         ),
-        href=f"/exam_details/{exam_id}",  # Dynamic link to exam detail page
+        href=f"/exam_details/{exam_id}",
         width="100%",
         text_decoration="none",
     )
 
-# Exam data
-exams_list = [
+
+exam_data_list = [
     {"id": "math_final_1", "name": "Mathematics Final 1", "exam_date": "2025-05-10", "status": "upcoming", "exam_time": "09:00 AM - 11:00 AM"},
     {"id": "math_midterm", "name": "Mathematics Midterm", "exam_date": "2025-04-15", "status": "completed", "exam_time": "02:00 PM - 04:00 PM"},
     {"id": "math_final_2", "name": "Mathematics Final 2", "exam_date": "2025-06-01", "status": "upcoming", "exam_time": "10:00 AM - 12:00 PM"},
 ]
+
 
 def exam() -> rx.Component:
     return rx.vstack(
@@ -43,7 +44,7 @@ def exam() -> rx.Component:
             rx.box(
                 rx.vstack(
                     rx.text("Upcoming Exams", size="4", weight="bold"),
-                    *[exam_item(exam["id"], exam["name"], exam["exam_date"], exam["status"], exam["exam_time"]) for exam in exams_list if exam["status"] == "upcoming"],
+                    *[exam_item(e["id"], e["name"], e["exam_date"], e["status"], e["exam_time"]) for e in exam_data_list if e["status"] == "upcoming"],
                     spacing="1",
                     width="100%",
                 ),
@@ -59,7 +60,7 @@ def exam() -> rx.Component:
             rx.box(
                 rx.vstack(
                     rx.text("Completed Exams", size="4", weight="bold"),
-                    *[exam_item(exam["id"], exam["name"], exam["exam_date"], exam["status"], exam["exam_time"]) for exam in exams_list if exam["status"] == "completed"],
+                    *[exam_item(e["id"], e["name"], e["exam_date"], e["status"], e["exam_time"]) for e in exam_data_list if e["status"] == "completed"],
                     spacing="1",
                     width="100%",
                 ),
