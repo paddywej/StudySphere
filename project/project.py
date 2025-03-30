@@ -1,6 +1,7 @@
 import reflex as rx
 from rxconfig import config
 from project.components.NavBar import navbar
+from project.components.LandingNavBar import landingnavbar
 from project.components.SearchBar import search_bar
 from project.pages.homepage import menu_year
 from project.pages.register import register
@@ -19,6 +20,7 @@ from project.pages.exampage import exam
 from project.pages.examdetailpage import exam_details
 from project.pages.gradepage import grades
 from project.pages.manage_students import manage_students
+from project.pages.landingpage import landing
 
 
 style = {
@@ -159,9 +161,10 @@ def grade_page() -> rx.Component:
 def index() -> rx.Component:
     return rx.container(
         # register(),
-        login(),
+        # login(),
         # HomePage(),
         # lectures(),
+        landing_page(),
         bg="white"
     )
 
@@ -196,6 +199,19 @@ def manage_students_page() -> rx.Component:
         margin_top="10px", 
         bg="white"
     )
+
+def landing_page() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            landingnavbar(), 
+            landing(),
+        ),
+        justify="center",
+        min_height="100vh", 
+        margin_top="70px", 
+        bg="white"
+    )
+
 # def year3() -> rx.Component:
 #     return rx.container(
 #         Year3(),
@@ -222,5 +238,6 @@ app.add_page(exam_page, route="/exam")
 app.add_page(exam_detail_page, route="/exam_details/[exam_id]")
 app.add_page(grade_page, route="/grades")
 app.add_page(manage_students_page, route="/manage_students")
+app.add_page(landing_page, route="/landing")
 
 
