@@ -2,7 +2,7 @@ import reflex as rx
 
 def student_item(student: str) -> rx.Component:
     return rx.box(
-        rx.text(student, size="3", weight="bold"),
+        rx.text(student, size="3"),
         bg="#EFFAFF",  # Light blue background for student items
         color="black",
         padding="1em",
@@ -69,7 +69,7 @@ def manage_students() -> rx.Component:
             ),
             spacing="2",  # Space between the buttons
             justify="center",  # Center the buttons horizontally
-            margin_top="20px",  # Space above the buttons
+            margin_top="5px",  # Space above the buttons
         ),
         spacing="4",
         justify="center",
