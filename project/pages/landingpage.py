@@ -8,7 +8,7 @@ def landing():
         "margin": "0px",
         "padding": "0px",
         "background": "linear-gradient(to bottom, #d3edf8, #5393c8)",
-        "overflow_x": "hidden",
+        "overflow": "hidden",  # Prevent scrolling
         "position": "absolute",
         "top": "0px",
         "left": "0px",
@@ -29,9 +29,10 @@ def landing():
         "z_index": "1",
     }
     
+    # White area below the wave
     bottom_white_style = {
         "position": "absolute",
-        "bottom": "0",
+        "bottom": "0",  # Ensure it sticks to the bottom
         "left": "0",
         "width": "100%",
         "height": "100px",  # Height of the white area below the wave
@@ -114,7 +115,6 @@ def landing():
                     on_click=rx.redirect("/login"),
                     bg="#5996af",
                     color="white",
-                    # border_radius="20px",
                     width="200px",     # Add button width
                     height="60px",     # Add button height
                     padding="20px",    # Add padding
@@ -126,9 +126,8 @@ def landing():
                 left="25%",
                 transform="translate(-50%, -50%)",
                 padding="4",
-                # border_radius="lg",
                 bg="rgba(255, 255, 255, 0.8)"
-        ),
+            ),
 
             # Apply the full background style
             **app_style
