@@ -1,13 +1,13 @@
 import reflex as rx
 import requests
 
-def get_subjects(year: int, semester: int):
-    url = f"http://localhost:8000/subjects/{year}/{semester}" 
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()  
-    else:
-        return []
+# def get_subjects(year: int, semester: int):
+#     url = f"http://localhost:8000/subjects/{year}/{semester}" 
+#     response = requests.get(url)
+#     if response.status_code == 200:
+#         return response.json()  
+#     else:
+#         return []
 
 def create_container(title: str, subjects: list) -> rx.Component:
     """Creates a scrollable container with subject buttons."""
@@ -38,15 +38,17 @@ def create_container(title: str, subjects: list) -> rx.Component:
 
 def Year2() -> rx.Component:
     """Creates the main page layout with scrollable containers for Semester 1 and 2."""
-    semester_1_subjects = get_subjects(2, 1) 
-    semester_2_subjects = get_subjects(2, 2)  
+    # semester_1_subjects = get_subjects(2, 1) 
+    # semester_2_subjects = get_subjects(2, 2)  
 
     return rx.box(
         rx.vstack(
             rx.text("Year 2", font_size="35px", font_weight="bold", color="#598da2", text_align="center"),  # Centered title text
             rx.hstack(
-                create_container("Semester 1", semester_1_subjects),
-                create_container("Semester 2", semester_2_subjects),
+                create_container("semester 1", "subject"),
+                create_container("semester 2", "subject"),
+                # create_container("Semester 1", semester_1_subjects),
+                # create_container("Semester 2", semester_2_subjects),
                 spacing="9",
                 align="center"
             ),
