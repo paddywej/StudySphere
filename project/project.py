@@ -165,7 +165,7 @@ def index() -> rx.Component:
         # HomePage(),
         # lectures(),
         landing_page(),
-        bg="white"
+        # bg="white"
     )
 
 def year1() -> rx.Component:
@@ -238,6 +238,6 @@ app.add_page(exam_page, route="/exam")
 app.add_page(exam_detail_page, route="/exam_details/[exam_id]")
 app.add_page(grade_page, route="/grades")
 app.add_page(manage_students_page, route="/manage_students")
-app.add_page(landing_page, route="/landing")
+app.add_page(landing_page, route="/landingpage")
 
 
