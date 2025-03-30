@@ -107,7 +107,7 @@ def assignment_details() -> rx.Component:
                 justify="center",  # Aligns the containers side by side
             ),
 
-            spacing="3",  # Space between the containers and buttons
+            spacing="6",  # Space between the containers and buttons
             align_items="center",
         ),
         width="100%",
@@ -115,6 +115,6 @@ def assignment_details() -> rx.Component:
         display="flex",
         justify_content="center",
         align_items="center",
-        margin_top="90px",
-        margin_left="90px",
+        padding_top="7rem",
+        margin_left="7rem",
     )

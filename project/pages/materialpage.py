@@ -72,7 +72,7 @@ def materials() -> rx.Component:
                     margin_left="13%",  # Added left margin to shift buttons away from the left
                 ),
             ),
-            spacing="9",  # Space between the title and materials content
+            spacing="6",  # Space between the title and materials content
             align_items="center",  # Align everything in the center
         ),
         width="100%",
@@ -80,6 +80,6 @@ def materials() -> rx.Component:
         display="flex",
         justify_content="center",  # Center everything horizontally
         align_items="center",  # Center everything vertically
-        margin_top="50px",
-        margin_left="50px", 
+        padding_top="7rem",
+        margin_left="7rem",
     )
