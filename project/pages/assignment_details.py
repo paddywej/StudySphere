@@ -27,6 +27,10 @@ class AssignmentState(rx.State):
         """Handles grading an assignment."""
         rx.window_alert("Grade Assignment Clicked")  # Placeholder for grading logic
 
+    def view_submitted_works(self):
+        """View the submitted works."""
+        rx.window_alert("Viewing Submitted Works")
+
 def create_container(title: str, items: list) -> rx.Component:
     """Creates a scrollable container for assignment-related content."""
     return rx.box(
@@ -42,6 +46,7 @@ def create_container(title: str, items: list) -> rx.Component:
         padding="10px",
         overflow_y="scroll",
     )
+
 def assignment_details() -> rx.Component:
     """Dynamic assignment page with containers side by side and buttons below."""
     return rx.box(
@@ -68,6 +73,11 @@ def assignment_details() -> rx.Component:
                             "Grade Assignment", padding="10px", background_color="#6EA9C5",
                             color="white", width="180px", height="45px", border_radius="10px",
                             weight="bold", on_click=lambda: AssignmentState.grade_assignment()
+                        ),
+                        rx.button(
+                            "View Submitted Works", padding="10px", background_color="#6EA9C5",
+                            color="white", width="180px", height="45px", border_radius="10px",
+                            weight="bold", on_click=lambda: AssignmentState.view_submitted_works()
                         ),
                         spacing="5",
                         align="center",

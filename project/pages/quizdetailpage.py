@@ -27,6 +27,11 @@ class QuizState(rx.State):
     def grade_quiz(self):
         """Handles grading a quiz."""
         rx.window_alert("Grade Quiz Clicked")  # Placeholder for grading logic
+    
+    def view_submitted_works(self):
+        """Handles viewing submitted works."""
+        rx.window_alert("View Submitted Works Clicked")  # Placeholder for viewing logic
+
 
 def create_container(title: str, items: list) -> rx.Component:
     """Creates a scrollable container for quiz-related content."""
@@ -43,6 +48,7 @@ def create_container(title: str, items: list) -> rx.Component:
         padding="10px",
         overflow_y="scroll",
     )
+
 
 def quiz_details() -> rx.Component:
     """Dynamic quiz page with containers side by side and buttons below."""
@@ -70,6 +76,11 @@ def quiz_details() -> rx.Component:
                             "Grade Quiz", padding="10px", background_color="#6EA9C5",
                             color="white", width="180px", height="45px", border_radius="10px",
                             weight="bold", on_click=lambda: QuizState.grade_quiz()
+                        ),
+                        rx.button(
+                            "View Submitted Works", padding="10px", background_color="#6EA9C5",
+                            color="white", width="180px", height="45px", border_radius="10px",
+                            weight="bold", on_click=lambda: QuizState.view_submitted_works()
                         ),
                         spacing="5",
                         align="center",

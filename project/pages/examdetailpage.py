@@ -28,6 +28,10 @@ class ExamState(rx.State):
         """Handles grading an exam."""
         rx.window_alert("Grade Exam Clicked")  # Placeholder for grading logic
 
+    def view_submitted_works(self):
+        """View the submitted works."""
+        rx.window_alert("Viewing Submitted Works")
+
 def create_container(title: str, items: list) -> rx.Component:
     """Creates a scrollable container for exam-related content."""
     return rx.box(
@@ -70,6 +74,11 @@ def exam_details() -> rx.Component:
                             "Grade Exam", padding="10px", background_color="#6EA9C5",
                             color="white", width="180px", height="45px", border_radius="10px",
                             weight="bold", on_click=lambda: ExamState.grade_exam()
+                        ),
+                        rx.button(
+                            "View Submitted Works", padding="10px", background_color="#6EA9C5",
+                            color="white", width="180px", height="45px", border_radius="10px",
+                            weight="bold", on_click=lambda: ExamState.view_submitted_works()
                         ),
                         spacing="5",
                         align="center",
