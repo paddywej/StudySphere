@@ -186,7 +186,6 @@ def year1() -> rx.Component:
     return rx.container(
         rx.vstack(
             navbar(),
-            navmenu(),
             Year1(),
         ),
         bg="white"
@@ -197,7 +196,6 @@ def year2() -> rx.Component:
     return rx.container(
         rx.vstack(
             navbar(), 
-            navmenu(),
             Year2(),
         ),
         bg="white"
@@ -208,7 +206,6 @@ def year3() -> rx.Component:
     return rx.container(
         rx.vstack(
             navbar(),
-            navmenu(),
             Year3(),
         ),
         bg="white"
@@ -219,7 +216,6 @@ def year4() -> rx.Component:
     return rx.container(
         rx.vstack(
             navbar(), 
-            navmenu(),
             Year4(),
         ),
         bg="white"
