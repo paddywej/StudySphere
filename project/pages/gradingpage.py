@@ -30,7 +30,7 @@ def grading_item(student: str) -> rx.Component:
 def grading() -> rx.Component:
     """Displays a grading page for professors."""
     return rx.vstack(
-        rx.text("Grade Student Works", size="4", weight="bold"),
+        rx.text("Grade Student Works", size="4", weight="bold", color="#5996af"),
         *[grading_item(student) for student in students],
         
         rx.button(
@@ -52,6 +52,6 @@ def grading() -> rx.Component:
         padding="2em",
         bg="#D0E2EB",
         border_radius="25px",
-        padding_top="7rem",
         margin_left="14rem",
+        margin_top="5rem"
     )
