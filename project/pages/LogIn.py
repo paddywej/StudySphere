@@ -41,10 +41,14 @@ def login() -> rx.Component:
                         width="20rem",
                         height="2.4rem",
                     ),
-                    rx.hstack(
-                        navbar_link("Forgot password?", "/#"),
-                        margin_left="12rem"
-                    ),                  
+                    rx.text("Register as", font_size="16px", color="white"),
+                    rx.select(["Student", "Professor"], name="role", placeholder="Select Role",
+                              border_radius="20px", border="none", color="black",
+                              background_color="#EFFAFF", width="20rem", height="2.4rem"),
+
+                    # Display error messages
+                    rx.text("", color="#A60A1B", font_size="16px", text_decoration="underline"), 
+                        
                     rx.button(
                         "Log in",
                         type="submit",
@@ -56,6 +60,10 @@ def login() -> rx.Component:
                         align_items="center",
                         margin_left="7.5rem",
                     ),
+                    rx.hstack(
+                        navbar_link("Forgot password?", "/#"),
+                        margin_left="6.5rem"
+                    ), 
                     justify="center",
                 ),
                 on_submit=FormState.handle_submit,
@@ -73,7 +81,7 @@ def login() -> rx.Component:
             align_items="center",
             justify="center",
             margin_top="12px",
-        ),
+        ),      
         bg="#598DA2",
         color="white", 
         padding="1em",
