@@ -24,6 +24,7 @@ from project.pages.manage_students import manage_students
 from project.pages.landingpage import landing
 from project.pages.submitted_works import manage_submitted_works
 from project.pages.professor_subjects import professor_subjects
+from project.pages.gradingpage import grading
 
 style = {
     "::placeholder": {
@@ -275,6 +276,19 @@ def professor_subjects_page() -> rx.Component:
         bg="white"
     )
 
+def grading_page() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(),
+            navmenu(),
+            grading(),
+        ),
+        justify="center",
+        min_height="100vh", 
+        margin_top="10px", 
+        bg="white"
+    )
+
 app = rx.App(style=style)
 
 # Add all pages properly
@@ -299,3 +313,6 @@ app.add_page(manage_students_page, route="/manage_students")
 app.add_page(landing_page, route="/landingpage")
 app.add_page(manage_submitted_works_page, route="/manage_submitted_works")
 app.add_page(professor_subjects_page, route="/professor_subjects")
+app.add_page(grading_page, route="/grading")
+
+

@@ -73,7 +73,8 @@ def manage_submitted_works() -> rx.Component:
             ),
             spacing="2",  # Space between the buttons
             justify="center",  # Center the buttons horizontally
-            margin_top="5px",  # Space above the buttons
+            margin_top="5px",
+            on_click=rx.redirect("/grading")  # Space above the buttons
         ),
         spacing="4",
         justify="center",
