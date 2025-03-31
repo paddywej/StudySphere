@@ -26,13 +26,38 @@ import requests
 #     else:
 #         return "Professor"
 
-def subject_item(name: str, year: int, term: int) -> rx.Component:
-    """Creates a styled button for each subject."""
+def subject_item(name: str, year: int, term: int, subject_id: int = None) -> rx.Component:
+    """Creates a styled button for each subject with edit and delete options."""
     return rx.box(
-        rx.vstack(
-            rx.text(name, size="3", weight="bold"),
-            rx.text(f"Year {year} - Term {term}", size="2", color="gray"),
-            spacing="1",
+        rx.hstack(
+            rx.vstack(
+                rx.text(name, size="3", weight="bold"),
+                rx.text(f"Year {year} - Term {term}", size="2", color="gray"),
+                spacing="1",
+                align_items="flex-start",
+                width="80%",
+            ),
+            rx.spacer(),
+            rx.hstack(
+                rx.button(
+                    rx.icon("pencil"),
+                    size="1",
+                    variant="ghost",
+                    on_click=lambda: rx.window_alert(f"Edit subject: {name}"),
+                    color="gray",
+                    _hover={"color": "blue.500"},
+                ),
+                rx.button(
+                    rx.icon("trash"),
+                    size="1",
+                    variant="ghost",
+                    on_click=lambda: rx.window_alert(f"Delete subject: {name}"),
+                    color="gray",
+                    _hover={"color": "red.500"},
+                ),
+                spacing="1",
+            ),
+            width="100%",
         ),
         bg="#F4F3F2",
         color="black",
@@ -44,13 +69,37 @@ def subject_item(name: str, year: int, term: int) -> rx.Component:
     )
 
 def create_container(title: str, subjects: list) -> rx.Component:
-    """Creates a scrollable container with subject buttons."""
+    """Creates a scrollable container with subject buttons and an add button."""
     return rx.box(
-        rx.text(title, font_size="24px", font_weight="bold", color="white", text_align="center", margin_bottom="1rem"),
         rx.vstack(
-            *[subject_item(subject["name"], subject["year"], subject["term"]) for subject in subjects],
+            rx.hstack(
+                rx.text(title, font_size="24px", font_weight="bold", color="white"),
+                rx.spacer(),
+                rx.button(
+                    rx.hstack(
+                        rx.icon("plus"),
+                        rx.text("Add Subject"),
+                        spacing="1",
+                    ),
+                    bg="white",
+                    color="#598da2",
+                    size="2",
+                    border_radius="md",
+                    on_click=lambda: rx.window_alert("Add new subject"),
+                    _hover={"bg": "#FFEFD0"},
+                ),
+                width="100%",
+            ),
+            rx.divider(border_color="white", opacity=0.3, margin_y="3"),
+            rx.vstack(
+                *[subject_item(subject["name"], subject["year"], subject["term"], subject.get("id")) for subject in subjects],
+                spacing="3", 
+                align_items="center", 
+                width="100%",
+            ),
             spacing="3", 
-            align_items="center" 
+            align_items="flex-start",
+            width="100%",
         ),
         height="450px",
         width="550px",
@@ -69,13 +118,13 @@ def professor_subjects() -> rx.Component:
     # professor_name = get_professor_name(professor_id)
     
     # Using mock data for now
-    professor_name = "Dr. Visit"  # This would come from the get_professor_name function when uncommented
+    professor_name = "Dr. Smith"  # This would come from the get_professor_name function when uncommented
     professor_subjects = [
-        {"name": "Computer Science 101", "year": 1, "term": 1},
-        {"name": "Data Structures", "year": 2, "term": 1},
-        {"name": "Algorithms", "year": 2, "term": 2},
-        {"name": "Machine Learning", "year": 3, "term": 1},
-        {"name": "Artificial Intelligence", "year": 3, "term": 2},
+        {"id": 1, "name": "Computer Science 101", "year": 1, "term": 1},
+        {"id": 2, "name": "Data Structures", "year": 2, "term": 1},
+        {"id": 3, "name": "Algorithms", "year": 2, "term": 2},
+        {"id": 4, "name": "Machine Learning", "year": 3, "term": 1},
+        {"id": 5, "name": "Artificial Intelligence", "year": 3, "term": 2},
     ]
     
     return rx.box(
