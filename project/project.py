@@ -185,21 +185,47 @@ def index() -> rx.Component:
 def year1() -> rx.Component:
     return rx.container(
         rx.vstack(
-            navbar(), 
+            navbar(),
+            navmenu(),
             Year1(),
         ),
         bg="white"
         
     )
+
 def year2() -> rx.Component:
     return rx.container(
         rx.vstack(
             navbar(), 
+            navmenu(),
             Year2(),
         ),
         bg="white"
         
     )
+
+def year3() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(),
+            navmenu(),
+            Year3(),
+        ),
+        bg="white"
+        
+    )
+
+def year4() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(), 
+            navmenu(),
+            Year4(),
+        ),
+        bg="white"
+        
+    )
+
 
 def manage_students_page() -> rx.Component:
     return rx.container(
@@ -239,14 +265,6 @@ def manage_submitted_works_page() -> rx.Component:
         bg="white"
     )
 
-# def year3() -> rx.Component:
-#     return rx.container(
-#         Year3(),
-#     )
-# def year4() -> rx.Component:
-#     return rx.container(
-#         Year4(),
-#     )
 app = rx.App(style=style)
 
 # Add all pages properly
@@ -256,6 +274,8 @@ app.add_page(login_page, route="/login")
 app.add_page(HomePage, route="/home")
 app.add_page(year1, route="/year1")
 app.add_page(year2, route="/year2")
+app.add_page(year3, route="/year3")
+app.add_page(year4, route="/year4")
 app.add_page(assignments_page, route="/assignments")
 app.add_page(assignment_details_page, route="/assignment_details/[assignment_id]")
 app.add_page(lecture_page, route="/lectures")
