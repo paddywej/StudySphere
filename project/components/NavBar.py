@@ -2,7 +2,9 @@ import reflex as rx
 
 def navbar_link(text: str, url: str) -> rx.Component:
     return rx.link(
-        rx.text(text, size="2",color="white"), href=url
+        rx.text(text, size="2", color="white"),
+        href=url,
+        cursor="pointer",  # Added cursor pointer
     )
 
 def navbar() -> rx.Component:
@@ -11,12 +13,13 @@ def navbar() -> rx.Component:
         rx.desktop_only(
             rx.hstack(
                 rx.hstack(
-                    rx.image(src="/hat_icon.png", width="50px", height="auto"),
+                    rx.image(src="/hat_icon.png", width="50px", height="auto", on_click=rx.redirect("/home"), cursor="pointer"),  # Added cursor pointer
                     # rx.icon("menu", size=30), 
                     rx.heading(
-                        "StudySphere", size="7", weight="bold"
+                        "StudySphere", size="7", weight="bold", cursor="pointer"  # Added cursor pointer
                     ),
                     align_items="center",
+                    on_click=rx.redirect("/home"),
                 ),
                 rx.hstack(
                     rx.button(
@@ -25,6 +28,7 @@ def navbar() -> rx.Component:
                         bg="transparent",
                         border="none",  
                         padding="2", 
+                        cursor="pointer",  # Added cursor pointer
                     ),
                     rx.menu.root(
                         rx.menu.trigger(
@@ -32,16 +36,28 @@ def navbar() -> rx.Component:
                                 rx.icon("user"),
                                 size="2",
                                 radius="full",
+                                cursor="pointer",  # Added cursor pointer
                             )
                         ),
                         rx.menu.content(
-                            rx.menu.item("Settings"),
+                            rx.menu.item("Settings", cursor="pointer"),  # Added cursor pointer
                             rx.menu.separator(),
-                            rx.menu.item("Log out", on_click=rx.redirect("/login")),
+                            rx.menu.item("Log out", on_click=rx.redirect("/login"), cursor="pointer"),  # Added cursor pointer
                         ),
                         justify="end",
                     ),
-                    rx.text("User", font_size="1.2em", color="white"),
+                    # User text with dropdown menu
+                    rx.menu.root(
+                        rx.menu.trigger(
+                            rx.text("User", font_size="1.2em", color="white", cursor="pointer")  # Added cursor pointer to user text
+                        ),
+                        rx.menu.content(
+                            rx.menu.item("Settings", cursor="pointer"),  # Added cursor pointer
+                            rx.menu.separator(),
+                            rx.menu.item("Log out", on_click=rx.redirect("/login"), cursor="pointer"),  # Added cursor pointer
+                        ),
+                        justify="end",
+                    ),
                     spacing="2",  
                 ),
                 justify="between",
@@ -53,10 +69,10 @@ def navbar() -> rx.Component:
         rx.mobile_and_tablet(
             rx.hstack(
                 rx.hstack(
-                    rx.image(src="/hat_icon.png", width="60px", height="auto"),
+                    rx.image(src="/hat_icon.png", width="60px", height="auto", cursor="pointer"),  # Added cursor pointer
                     # rx.icon("menu", size=25), 
                     rx.heading(
-                        "StudySphere", size="6", weight="bold"
+                        "StudySphere", size="6", weight="bold", cursor="pointer"  # Added cursor pointer
                     ),
                     align_items="center",
                 ),
@@ -67,6 +83,7 @@ def navbar() -> rx.Component:
                         bg="transparent", 
                         border="none", 
                         padding="2",
+                        cursor="pointer",  # Added cursor pointer
                     ),
                     rx.menu.root(
                         rx.menu.trigger(
@@ -74,12 +91,25 @@ def navbar() -> rx.Component:
                                 rx.icon("user"),
                                 size="2",
                                 radius="full",
+                                cursor="pointer",  # Added cursor pointer
                             )
                         ),
                         rx.menu.content(
-                            rx.menu.item("Settings"),
+                            rx.menu.item("Settings", cursor="pointer"),  # Added cursor pointer
                             rx.menu.separator(),
-                            rx.menu.item("Log out"),
+                            rx.menu.item("Log out", cursor="pointer"),  # Added cursor pointer
+                        ),
+                        justify="end",
+                    ),
+                    # User text with dropdown menu for mobile/tablet version
+                    rx.menu.root(
+                        rx.menu.trigger(
+                            rx.text("User", font_size="1.2em", color="white", cursor="pointer")  # Added cursor pointer to user text
+                        ),
+                        rx.menu.content(
+                            rx.menu.item("Settings", cursor="pointer"),  # Added cursor pointer
+                            rx.menu.separator(),
+                            rx.menu.item("Log out", cursor="pointer"),  # Added cursor pointer
                         ),
                         justify="end",
                     ),
