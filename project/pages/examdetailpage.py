@@ -70,15 +70,15 @@ def exam_details() -> rx.Component:
                             color="white", width="180px", height="45px", border_radius="10px",
                             weight="bold", on_click=lambda: rx.window_alert("Edit Exam Clicked")
                         ),
-                        rx.button(
-                            "Grade Exam", padding="10px", background_color="#6EA9C5",
-                            color="white", width="180px", height="45px", border_radius="10px",
-                            weight="bold", on_click=lambda: ExamState.grade_exam()
-                        ),
+                        # rx.button(
+                        #     "Grade Exam", padding="10px", background_color="#6EA9C5",
+                        #     color="white", width="180px", height="45px", border_radius="10px",
+                        #     weight="bold", on_click=lambda: ExamState.grade_exam()
+                        # ),
                         rx.button(
                             "View Submitted Works", padding="10px", background_color="#6EA9C5",
                             color="white", width="180px", height="45px", border_radius="10px",
-                            weight="bold", on_click=lambda: ExamState.view_submitted_works()
+                            weight="bold", on_click=rx.redirect("/manage_submitted_works")
                         ),
                         spacing="5",
                         align="center",

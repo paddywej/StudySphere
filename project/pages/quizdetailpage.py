@@ -72,15 +72,15 @@ def quiz_details() -> rx.Component:
                             color="white", width="180px", height="45px", border_radius="10px",
                             weight="bold", on_click=lambda: rx.window_alert("Edit Quiz Clicked")
                         ),
-                        rx.button(
-                            "Grade Quiz", padding="10px", background_color="#6EA9C5",
-                            color="white", width="180px", height="45px", border_radius="10px",
-                            weight="bold", on_click=lambda: QuizState.grade_quiz()
-                        ),
+                        # rx.button(
+                        #     "Grade Quiz", padding="10px", background_color="#6EA9C5",
+                        #     color="white", width="180px", height="45px", border_radius="10px",
+                        #     weight="bold", on_click=lambda: QuizState.grade_quiz()
+                        # ),
                         rx.button(
                             "View Submitted Works", padding="10px", background_color="#6EA9C5",
                             color="white", width="180px", height="45px", border_radius="10px",
-                            weight="bold", on_click=lambda: QuizState.view_submitted_works()
+                            weight="bold", on_click=rx.redirect("/manage_submitted_works")
                         ),
                         spacing="5",
                         align="center",
@@ -107,7 +107,7 @@ def quiz_details() -> rx.Component:
                         rx.button(
                             "Unsubmit", padding="10px", background_color="#6EA9C5",
                             color="white", width="180px", height="45px", border_radius="10px",
-                            weight="bold", on_click=lambda: QuizState.unsubmit()
+                            weight="bold", on_click=rx.redirect("/manage_submitted_works")
                         ),
                         spacing="5",
                         align="center",

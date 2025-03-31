@@ -69,15 +69,15 @@ def assignment_details() -> rx.Component:
                             color="white", width="180px", height="45px", border_radius="10px",
                             weight="bold", on_click=lambda: rx.window_alert("Edit Assignment Clicked")
                         ),
-                        rx.button(
-                            "Grade Assignment", padding="10px", background_color="#6EA9C5",
-                            color="white", width="180px", height="45px", border_radius="10px",
-                            weight="bold", on_click=lambda: AssignmentState.grade_assignment()
-                        ),
+                        # rx.button(
+                        #     "Grade Assignment", padding="10px", background_color="#6EA9C5",
+                        #     color="white", width="180px", height="45px", border_radius="10px",
+                        #     weight="bold", on_click=lambda: AssignmentState.grade_assignment()
+                        # ),
                         rx.button(
                             "View Submitted Works", padding="10px", background_color="#6EA9C5",
                             color="white", width="180px", height="45px", border_radius="10px",
-                            weight="bold", on_click=lambda: AssignmentState.view_submitted_works()
+                            weight="bold", on_click=rx.redirect("/manage_submitted_works")
                         ),
                         spacing="5",
                         align="center",

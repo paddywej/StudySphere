@@ -22,7 +22,7 @@ from project.pages.examdetailpage import exam_details
 from project.pages.gradepage import grades
 from project.pages.manage_students import manage_students
 from project.pages.landingpage import landing
-
+from project.pages.submitted_works import manage_submitted_works
 
 style = {
     "::placeholder": {
@@ -226,6 +226,19 @@ def landing_page() -> rx.Component:
         bg="white"
     )
 
+def manage_submitted_works_page() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(),
+            navmenu(),
+            manage_submitted_works(),
+        ),
+        justify="center",
+        min_height="100vh", 
+        margin_top="10px", 
+        bg="white"
+    )
+
 # def year3() -> rx.Component:
 #     return rx.container(
 #         Year3(),
@@ -254,5 +267,6 @@ app.add_page(exam_detail_page, route="/exam_details/[exam_id]")
 app.add_page(grade_page, route="/grades")
 app.add_page(manage_students_page, route="/manage_students")
 app.add_page(landing_page, route="/landingpage")
+app.add_page(manage_submitted_works_page, route="/manage_submitted_works")
 
 
