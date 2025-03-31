@@ -19,7 +19,7 @@ def create_container(title: str, subjects: list) -> rx.Component:
                 padding="15px",  
                 background_color="#F4F3F2", 
                 color="black", 
-                border_radius="0",
+                border_radius="8px",
                 width="100%",
                 height="65px",
                 _hover={"bg": "#FFEFD0"} 
@@ -45,8 +45,8 @@ def Year1() -> rx.Component:
         rx.vstack(
             rx.text("Year 1", font_size="35px", font_weight="bold", color="#598da2", text_align="center"),  # Centered title text
             rx.hstack(
-                create_container("semester 1", "subject"),
-                create_container("semester 2", "subject"),
+                create_container("Semester 1", "subject"),
+                create_container("Semester 2", "subject"),
                 # create_container("Semester 1", semester_1_subjects),
                 # create_container("Semester 2", semester_2_subjects),
                 spacing="9",

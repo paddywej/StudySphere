@@ -45,8 +45,8 @@ def Year2() -> rx.Component:
         rx.vstack(
             rx.text("Year 2", font_size="35px", font_weight="bold", color="#598da2", text_align="center"),  # Centered title text
             rx.hstack(
-                create_container("semester 1", "subject"),
-                create_container("semester 2", "subject"),
+                create_container("Semester 1", "subject"),
+                create_container("Semester 2", "subject"),
                 # create_container("Semester 1", semester_1_subjects),
                 # create_container("Semester 2", semester_2_subjects),
                 spacing="9",
