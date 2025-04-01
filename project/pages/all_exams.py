@@ -1,38 +1,32 @@
 import reflex as rx
 import requests
 
-def fetch_assignments_data() -> list:
-    """Simulate fetching multiple assignments data from a backend."""
-    # Simulate an API request to get the assignment data
-    # Example of how you might get the assignment data from an API or database:
-    # response = requests.get(f"http://example.com/api/assignments/")
-    # return response.json()
-    
-    # Mock data for simulation purposes:
-    assignments_data = [
+def fetch_exams_data() -> list:
+    """Simulate fetching multiple exams data from a backend."""
+    exams_data = [
         {
-            "assignment_name": "Math Assignment 1",
+            "exam_name": "Math Final Exam",
             "due_date": "2025-09-03",
             "students": [
-                {"name": "Student 1", "file": "Assignment1.pdf"},
-                {"name": "Student 2", "file": "Assignment1.pdf"},
+                {"name": "Student 1", "file": "FinalExam1.pdf"},
+                {"name": "Student 2", "file": "FinalExam1.pdf"},
             ]
         },
         {
-            "assignment_name": "Science Project 1",
+            "exam_name": "Science Midterm", 
             "due_date": "2025-11-03",
             "students": [
-                {"name": "Student A", "file": "Project1.pdf"},
-                {"name": "Student B", "file": "Project1.pdf"},
+                {"name": "Student A", "file": "Midterm1.pdf"},
+                {"name": "Student B", "file": "Midterm1.pdf"},
             ]
         }
     ]
-    return assignments_data
+    return exams_data
 
-def create_assignment_container(assignment_title: str, due_date: str, student_data: list) -> rx.Component:
-    """Creates a scrollable container with student assignment data."""
+def create_exam_container(exam_title: str, due_date: str, student_data: list) -> rx.Component:
+    """Creates a scrollable container with student exam data."""
     return rx.box(
-        rx.text(f"{assignment_title} - {due_date}", font_size="24px", font_weight="bold", color="black", text_align="center", margin_bottom="1rem"),
+        rx.text(f"{exam_title} - {due_date}", font_size="24px", font_weight="bold", color="black", text_align="center", margin_bottom="1rem"),
         rx.vstack(
             *[
                 rx.hstack(
@@ -61,7 +55,7 @@ def create_assignment_container(assignment_title: str, due_date: str, student_da
                         justify_content="center"
                     ),
                     rx.box(
-                        rx.input(placeholder="Enter grade", width="100%", bg="white", border_radius="4px"),
+                        rx.input(placeholder="Enter exam score", width="100%", bg="white", border_radius="4px"),
                         width="33%",
                         padding="10px",
                         background_color="#effaff",
@@ -86,54 +80,48 @@ def create_assignment_container(assignment_title: str, due_date: str, student_da
         overflow_y="scroll",
     )
 
-# In your State class:
 class State(rx.State):
-    assignment_to_delete: str = ""  # Add this state var
-    assignments: list[dict] = []  # Store assignments
+    exam_to_delete: str = ""
+    exams: list[dict] = []
 
-    def add_assignment(self, form_data: dict):
-        # Handle the form submission here
-        self.assignments.append(form_data)
+    def add_exam(self, form_data: dict):
+        self.exams.append(form_data)
         return rx.toast.info(
-            f"Assignment {form_data['assignment_name']} has been added.",
+            f"Exam {form_data['exam_name']} has been added.",
             position="bottom-right",
         )
 
-    def delete_assignment(self):
-        # Filter out the assignment with matching name
-        self.assignments = [
-            a for a in self.assignments 
-            if a["assignment_name"] != self.assignment_to_delete
+    def delete_exam(self):
+        self.exams = [
+            e for e in self.exams 
+            if e["exam_name"] != self.exam_to_delete
         ]
         return rx.toast.info(
-            f"Assignment {self.assignment_to_delete} has been deleted.",
+            f"Exam {self.exam_to_delete} has been deleted.",
             position="bottom-right",
         )
         
-def all_assignments() -> rx.Component:
-    """Creates the main assignments page layout with scrollable containers."""
-    assignments_data = fetch_assignments_data()
+def all_exams() -> rx.Component:
+    """Creates the main exams page layout with scrollable containers."""
+    exams_data = fetch_exams_data()
     
     return rx.box(
         rx.vstack(
-            # Title section
-            rx.text("Assignments", font_size="35px", font_weight="bold", color="#598da2", text_align="center"),
+            rx.text("Exams", font_size="35px", font_weight="bold", color="#598da2", text_align="center"),
             
-            # Buttons on a new line
             rx.hstack(
-                # Add Assignment Dialog
                 rx.alert_dialog.root(
                     rx.alert_dialog.trigger(
-                        rx.button("Add Assignments", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
+                        rx.button("Add Exam", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
                     ),
                     rx.alert_dialog.content(
-                        rx.alert_dialog.title("Add Assignment"),
-                        rx.alert_dialog.description("Fill in the assignment details"),
+                        rx.alert_dialog.title("Add Exam"),
+                        rx.alert_dialog.description("Fill in the exam details"),
                         rx.form(
                             rx.flex(
                                 rx.input(
-                                    placeholder="Assignment Name",
-                                    name="assignment_name", 
+                                    placeholder="Exam Name",
+                                    name="exam_name", 
                                     required=True
                                 ),
                                 rx.input(
@@ -167,26 +155,25 @@ def all_assignments() -> rx.Component:
                                 direction="column",
                                 spacing="4",
                             ),
-                            on_submit=State.add_assignment,
+                            on_submit=State.add_exam,
                             reset_on_submit=True,
                         ),
                         max_width="450px",
                     ),
                 ),
                 
-                # Delete Assignment Dialog
                 rx.alert_dialog.root(
                     rx.alert_dialog.trigger(
-                        rx.button("Delete Assignments", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
+                        rx.button("Delete Exam", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
                     ),
                     rx.alert_dialog.content(
-                        rx.alert_dialog.title("Delete Assignment"),
-                        rx.alert_dialog.description("Enter the name of the assignment you want to delete."),
+                        rx.alert_dialog.title("Delete Exam"),
+                        rx.alert_dialog.description("Enter the name of the exam you want to delete."),
                         rx.vstack(
                             rx.input(
-                                placeholder="Assignment Name",
-                                on_change=State.set_assignment_to_delete,
-                                value=State.assignment_to_delete,
+                                placeholder="Exam Name",
+                                on_change=State.set_exam_to_delete,
+                                value=State.exam_to_delete,
                             ),
                             rx.flex(
                                 rx.alert_dialog.cancel(
@@ -200,7 +187,7 @@ def all_assignments() -> rx.Component:
                                     rx.button(
                                         "Delete",
                                         color_scheme="red",
-                                        on_click=State.delete_assignment,
+                                        on_click=State.delete_exam,
                                     ),
                                 ),
                                 spacing="3",
@@ -217,14 +204,13 @@ def all_assignments() -> rx.Component:
                 margin_top="1rem"
             ),
 
-            # Assignments list
             rx.vstack(
                 *[
-                    create_assignment_container(
-                        assignment["assignment_name"],
-                        assignment["due_date"],
-                        assignment["students"]
-                    ) for assignment in assignments_data
+                    create_exam_container(
+                        exam["exam_name"],
+                        exam["due_date"],
+                        exam["students"]
+                    ) for exam in exams_data
                 ],
                 spacing="6",
                 align="center"

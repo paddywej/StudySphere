@@ -36,7 +36,7 @@ def navbar() -> rx.Component:
                                 rx.icon("user"),
                                 size="2",
                                 radius="full",
-                                cursor="pointer",  # Added cursor pointer
+                                cursor="pointer" # Added cursor pointer
                             )
                         ),
                         rx.menu.content(

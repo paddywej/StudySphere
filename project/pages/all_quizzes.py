@@ -1,38 +1,32 @@
 import reflex as rx
 import requests
 
-def fetch_assignments_data() -> list:
-    """Simulate fetching multiple assignments data from a backend."""
-    # Simulate an API request to get the assignment data
-    # Example of how you might get the assignment data from an API or database:
-    # response = requests.get(f"http://example.com/api/assignments/")
-    # return response.json()
-    
-    # Mock data for simulation purposes:
-    assignments_data = [
+def fetch_quizzes_data() -> list:
+    """Simulate fetching multiple quizzes data from a backend."""
+    quizzes_data = [
         {
-            "assignment_name": "Math Assignment 1",
+            "quiz_name": "Math Quiz 1",
             "due_date": "2025-09-03",
             "students": [
-                {"name": "Student 1", "file": "Assignment1.pdf"},
-                {"name": "Student 2", "file": "Assignment1.pdf"},
+                {"name": "Student 1", "file": "Quiz1.pdf"},
+                {"name": "Student 2", "file": "Quiz1.pdf"},
             ]
         },
         {
-            "assignment_name": "Science Project 1",
+            "quiz_name": "Science Quiz 1", 
             "due_date": "2025-11-03",
             "students": [
-                {"name": "Student A", "file": "Project1.pdf"},
-                {"name": "Student B", "file": "Project1.pdf"},
+                {"name": "Student A", "file": "Quiz1.pdf"},
+                {"name": "Student B", "file": "Quiz1.pdf"},
             ]
         }
     ]
-    return assignments_data
+    return quizzes_data
 
-def create_assignment_container(assignment_title: str, due_date: str, student_data: list) -> rx.Component:
-    """Creates a scrollable container with student assignment data."""
+def create_quiz_container(quiz_title: str, due_date: str, student_data: list) -> rx.Component:
+    """Creates a scrollable container with student quiz data."""
     return rx.box(
-        rx.text(f"{assignment_title} - {due_date}", font_size="24px", font_weight="bold", color="black", text_align="center", margin_bottom="1rem"),
+        rx.text(f"{quiz_title} - {due_date}", font_size="24px", font_weight="bold", color="black", text_align="center", margin_bottom="1rem"),
         rx.vstack(
             *[
                 rx.hstack(
@@ -61,7 +55,7 @@ def create_assignment_container(assignment_title: str, due_date: str, student_da
                         justify_content="center"
                     ),
                     rx.box(
-                        rx.input(placeholder="Enter grade", width="100%", bg="white", border_radius="4px"),
+                        rx.input(placeholder="Enter score", width="100%", bg="white", border_radius="4px"),
                         width="33%",
                         padding="10px",
                         background_color="#effaff",
@@ -86,54 +80,48 @@ def create_assignment_container(assignment_title: str, due_date: str, student_da
         overflow_y="scroll",
     )
 
-# In your State class:
 class State(rx.State):
-    assignment_to_delete: str = ""  # Add this state var
-    assignments: list[dict] = []  # Store assignments
+    quiz_to_delete: str = ""
+    quizzes: list[dict] = []
 
-    def add_assignment(self, form_data: dict):
-        # Handle the form submission here
-        self.assignments.append(form_data)
+    def add_quiz(self, form_data: dict):
+        self.quizzes.append(form_data)
         return rx.toast.info(
-            f"Assignment {form_data['assignment_name']} has been added.",
+            f"Quiz {form_data['quiz_name']} has been added.",
             position="bottom-right",
         )
 
-    def delete_assignment(self):
-        # Filter out the assignment with matching name
-        self.assignments = [
-            a for a in self.assignments 
-            if a["assignment_name"] != self.assignment_to_delete
+    def delete_quiz(self):
+        self.quizzes = [
+            q for q in self.quizzes 
+            if q["quiz_name"] != self.quiz_to_delete
         ]
         return rx.toast.info(
-            f"Assignment {self.assignment_to_delete} has been deleted.",
+            f"Quiz {self.quiz_to_delete} has been deleted.",
             position="bottom-right",
         )
         
-def all_assignments() -> rx.Component:
-    """Creates the main assignments page layout with scrollable containers."""
-    assignments_data = fetch_assignments_data()
+def all_quizzes() -> rx.Component:
+    """Creates the main quizzes page layout with scrollable containers."""
+    quizzes_data = fetch_quizzes_data()
     
     return rx.box(
         rx.vstack(
-            # Title section
-            rx.text("Assignments", font_size="35px", font_weight="bold", color="#598da2", text_align="center"),
+            rx.text("Quizzes", font_size="35px", font_weight="bold", color="#598da2", text_align="center"),
             
-            # Buttons on a new line
             rx.hstack(
-                # Add Assignment Dialog
                 rx.alert_dialog.root(
                     rx.alert_dialog.trigger(
-                        rx.button("Add Assignments", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
+                        rx.button("Add Quiz", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
                     ),
                     rx.alert_dialog.content(
-                        rx.alert_dialog.title("Add Assignment"),
-                        rx.alert_dialog.description("Fill in the assignment details"),
+                        rx.alert_dialog.title("Add Quiz"),
+                        rx.alert_dialog.description("Fill in the quiz details"),
                         rx.form(
                             rx.flex(
                                 rx.input(
-                                    placeholder="Assignment Name",
-                                    name="assignment_name", 
+                                    placeholder="Quiz Name",
+                                    name="quiz_name", 
                                     required=True
                                 ),
                                 rx.input(
@@ -167,26 +155,25 @@ def all_assignments() -> rx.Component:
                                 direction="column",
                                 spacing="4",
                             ),
-                            on_submit=State.add_assignment,
+                            on_submit=State.add_quiz,
                             reset_on_submit=True,
                         ),
                         max_width="450px",
                     ),
                 ),
                 
-                # Delete Assignment Dialog
                 rx.alert_dialog.root(
                     rx.alert_dialog.trigger(
-                        rx.button("Delete Assignments", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
+                        rx.button("Delete Quiz", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
                     ),
                     rx.alert_dialog.content(
-                        rx.alert_dialog.title("Delete Assignment"),
-                        rx.alert_dialog.description("Enter the name of the assignment you want to delete."),
+                        rx.alert_dialog.title("Delete Quiz"),
+                        rx.alert_dialog.description("Enter the name of the quiz you want to delete."),
                         rx.vstack(
                             rx.input(
-                                placeholder="Assignment Name",
-                                on_change=State.set_assignment_to_delete,
-                                value=State.assignment_to_delete,
+                                placeholder="Quiz Name",
+                                on_change=State.set_quiz_to_delete,
+                                value=State.quiz_to_delete,
                             ),
                             rx.flex(
                                 rx.alert_dialog.cancel(
@@ -200,7 +187,7 @@ def all_assignments() -> rx.Component:
                                     rx.button(
                                         "Delete",
                                         color_scheme="red",
-                                        on_click=State.delete_assignment,
+                                        on_click=State.delete_quiz,
                                     ),
                                 ),
                                 spacing="3",
@@ -217,14 +204,13 @@ def all_assignments() -> rx.Component:
                 margin_top="1rem"
             ),
 
-            # Assignments list
             rx.vstack(
                 *[
-                    create_assignment_container(
-                        assignment["assignment_name"],
-                        assignment["due_date"],
-                        assignment["students"]
-                    ) for assignment in assignments_data
+                    create_quiz_container(
+                        quiz["quiz_name"],
+                        quiz["due_date"],
+                        quiz["students"]
+                    ) for quiz in quizzes_data
                 ],
                 spacing="6",
                 align="center"

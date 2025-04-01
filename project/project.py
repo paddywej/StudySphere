@@ -27,6 +27,9 @@ from project.pages.submitted_works import manage_submitted_works
 from project.pages.professor_subjects import professor_subjects
 from project.pages.gradingpage import grading
 from project.pages.all_assignments import all_assignments
+from project.pages.all_assignments import all_assignments
+from project.pages.all_quizzes import all_quizzes
+from project.pages.all_exams import all_exams
 
 style = {
     "::placeholder": {
@@ -150,6 +153,19 @@ def quiz_detail_page() -> rx.Component:
         bg="white"
     )
 
+def all_quizzes_page() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(), 
+            navmenu(),
+            all_quizzes(),
+        ),
+        justify="center",
+        min_height="100vh", 
+        margin_top="10px", 
+        bg="white"
+    )
+
 def exam_page() -> rx.Component:
     return rx.container(
         rx.vstack(
@@ -169,6 +185,19 @@ def exam_detail_page() -> rx.Component:
             navbar(),
             navmenu(),
             exam_details(),
+        ),
+        justify="center",
+        min_height="100vh", 
+        margin_top="10px", 
+        bg="white"
+    )
+
+def all_exams_page() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(), 
+            navmenu(),
+            all_exams(),
         ),
         justify="center",
         min_height="100vh", 
@@ -330,3 +359,5 @@ app.add_page(manage_submitted_works_page, route="/manage_submitted_works")
 app.add_page(professor_subjects_page, route="/professor_subjects")
 app.add_page(grading_page, route="/grading")
 app.add_page(all_assignments_page, route="/all_assignments")
+app.add_page(all_quizzes_page, route="/all_quizzes")
+app.add_page(all_exams_page, route="/all_exams")

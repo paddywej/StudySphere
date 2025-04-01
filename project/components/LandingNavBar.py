@@ -53,11 +53,12 @@ def landingnavbar() -> rx.Component:
                             rx.icon("user"),
                             size="2",
                             radius="full",
+                            cursor="pointer"
                         ),
                         href="/login"
                     ),
                     rx.link(
-                        rx.text("Login", font_size="1.2em", color="white"),
+                        rx.text("Login", font_size="1.2em", color="white", cursor="pointer"),
                         href="/login"
                     ),
                     spacing="2",  
