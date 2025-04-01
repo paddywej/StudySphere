@@ -14,13 +14,8 @@ def navmenu_link(text: str, url: str, margin_top: str = "") -> rx.Component:
         width="100%",  
         margin_top=margin_top  
     )
-
-class NavigationState(rx.State):
-    @rx.event
-    def go_back(self):
-        return rx.redirect("javascript:history.back()")
     
-def navmenu() -> rx.Component:
+def homenavmenu() -> rx.Component:
     return rx.box(
         rx.vstack(            
             navmenu_link("Lectures", "/lectures"),
@@ -30,22 +25,7 @@ def navmenu() -> rx.Component:
             navmenu_link("Exam", "/exam"),
             navmenu_link("Grades", "/grades"),
             navmenu_link("Manage Students", "/manage_students"),
-            
-            rx.button(
-                "Back",
-                on_click=NavigationState.go_back,
-                width="100%",
-                padding="1em",
-                margin_top="40px",
-                text_align="center",
-                color="white",
-                weight="bold",
-                size="4",
-                bg="#598DA2",
-                text_decoration="none", 
-                _hover={"bg": "#2b4c59"}
-            ),
-            
+
             align_items="start",
             spacing="4",
             width="100%",

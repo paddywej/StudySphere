@@ -13,6 +13,7 @@ from project.pages.year4 import Year4
 from project.pages.lecturepage import lectures
 from project.pages.materialpage import materials
 from project.components.NavMenu import navmenu
+from project.components.HomeNavMenu import homenavmenu
 from project.pages.assignments_page import assignments
 from project.pages.assignment_details import assignment_details
 from project.pages.quizpage import quiz
@@ -36,7 +37,7 @@ def HomePage() -> rx.Component:
     return rx.container(
         rx.vstack(
             navbar(), 
-            navmenu(),
+            homenavmenu(),
             search_bar(),
             menu_year(),
         ),
