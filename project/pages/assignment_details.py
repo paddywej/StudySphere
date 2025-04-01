@@ -33,7 +33,7 @@ def create_container(title: str, items: list, extra_content: rx.Component = None
     """Creates a scrollable container for assignment-related content."""
     return rx.box(
         rx.box(
-            rx.text(title, font_size="18px", font_weight="bold", color="black"),
+            rx.text(title, font_size="18px", font_weight="bold", color="#1d2023"),
             position="relative",
             width="100%",
         ),
@@ -93,7 +93,7 @@ def assignment_details() -> rx.Component:
                         "Your Work", 
                         [],
                         extra_content=rx.box(
-                            rx.text("Score:", font_size="16px", font_weight="bold", color="black"),
+                            rx.text("Score:", font_size="16px", font_weight="bold", color="#1d2023"),
                             rx.text(
                                 AssignmentState.score,  # Score updates dynamically
                                 font_size="16px",
@@ -108,6 +108,7 @@ def assignment_details() -> rx.Component:
                             background_color="#d0e2eb",
                             border_radius="8px",
                             padding="5px",
+                            color="#1d2023"
                         )
                     ),
                     rx.vstack(

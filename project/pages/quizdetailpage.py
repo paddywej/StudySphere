@@ -8,6 +8,7 @@ class QuizState(rx.State):
     quiz_time: str = "12:00 PM"
     quiz_file: str = "sample_quiz.pdf"  # Simulated quiz file name
     user_file: str = ""  # Stores uploaded file
+    score: str = "Not Graded"  # Stores the student's score
     
     def upload_file(self, file_name: str):
         """Handles file upload."""
@@ -33,10 +34,16 @@ class QuizState(rx.State):
         rx.window_alert("View Submitted Works Clicked")  # Placeholder for viewing logic
 
 
-def create_container(title: str, items: list) -> rx.Component:
-    """Creates a scrollable container for quiz-related content."""
+def create_container(title: str, items: list, extra_content: rx.Component = None) -> rx.Component:
+    """Creates a scrollable container for assignment-related content."""
     return rx.box(
-        rx.text(title, font_size="18px", font_weight="bold", color="#1d2023"),
+        rx.box(
+            rx.text(title, font_size="18px", font_weight="bold", color="#1d2023"),
+            position="relative",
+            width="100%",
+        ),
+        # Add extra content like the score at the top-right if provided
+        extra_content if extra_content else rx.box(),
         rx.vstack(
             *[rx.box(item, padding="8px", background_color="#f8f8f8", border_radius="5px") for item in items],
             spacing="9"
@@ -47,6 +54,7 @@ def create_container(title: str, items: list) -> rx.Component:
         border_radius="25px",
         padding="10px",
         overflow_y="scroll",
+        position="relative",  # Required for absolute positioning inside
     )
 
 
@@ -92,7 +100,28 @@ def quiz_details() -> rx.Component:
 
                 # Your Work Container
                 rx.vstack(
-                    create_container("Your Work", []),
+                    create_container(
+                        "Your Work", 
+                        [],
+                        extra_content=rx.box(
+                            rx.text("Score:", font_size="16px", font_weight="bold", color="#1d2023"),
+                            rx.text(
+                                QuizState.score,  # Score updates dynamically
+                                font_size="16px",
+                                padding="5px 10px",
+                                background_color="#d0e2eb",
+                                border_radius="5px",
+                                text_align="center",
+                            ),
+                            position="absolute",
+                            top="10px", 
+                            right="10px",
+                            background_color="#d0e2eb",
+                            border_radius="8px",
+                            padding="5px",
+                            color="#1d2023"
+                        )
+                    ),
                     rx.vstack(
                         rx.button(
                             "Upload your file", padding="10px", background_color="#6EA9C5",
