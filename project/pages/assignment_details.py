@@ -63,28 +63,28 @@ def assignment_details() -> rx.Component:
                 # Assignment File Container
                 rx.vstack(
                     create_container("Assignment File", [AssignmentState.assignment_file]),
-                    rx.vstack(
-                        rx.button(
-                            "Add Assignment", padding="10px", background_color="#6EA9C5",
-                            color="white", width="180px", height="45px", border_radius="10px",
-                            weight="bold", on_click=lambda: rx.window_alert("Add Assignment Clicked")
-                        ),
-                        rx.button(
-                            "Edit Assignment", padding="10px", background_color="#6EA9C5",
-                            color="white", width="180px", height="45px", border_radius="10px",
-                            weight="bold", on_click=lambda: rx.window_alert("Edit Assignment Clicked")
-                        ),
-                        rx.button(
-                            "View Submitted Works", padding="10px", background_color="#6EA9C5",
-                            color="white", width="180px", height="45px", border_radius="10px",
-                            weight="bold", on_click=rx.redirect("/manage_submitted_works")
-                        ),
-                        spacing="5",
-                        align="center",
-                        margin_top="10px"
-                    ),
-                    align="center",
-                    spacing="3"
+                    # rx.vstack(
+                    #     rx.button(
+                    #         "Add Assignment", padding="10px", background_color="#6EA9C5",
+                    #         color="white", width="180px", height="45px", border_radius="10px",
+                    #         weight="bold", on_click=lambda: rx.window_alert("Add Assignment Clicked")
+                    #     ),
+                    #     rx.button(
+                    #         "Edit Assignment", padding="10px", background_color="#6EA9C5",
+                    #         color="white", width="180px", height="45px", border_radius="10px",
+                    #         weight="bold", on_click=lambda: rx.window_alert("Edit Assignment Clicked")
+                    #     ),
+                    #     rx.button(
+                    #         "View Submitted Works", padding="10px", background_color="#6EA9C5",
+                    #         color="white", width="180px", height="45px", border_radius="10px",
+                    #         weight="bold", on_click=rx.redirect("/manage_submitted_works")
+                    #     ),
+                    #     spacing="5",
+                    #     align="center",
+                    #     margin_top="10px"
+                    # ),
+                    # align="center",
+                    # spacing="3"
                 ),
 
                 # Your Work Container with Score at the Top Right

@@ -69,33 +69,33 @@ def quiz_details() -> rx.Component:
                 # Quiz File Container
                 rx.vstack(
                     create_container("Quiz File", [QuizState.quiz_file]),
-                    rx.vstack(
-                        rx.button(
-                            "Add Quiz", padding="10px", background_color="#6EA9C5",
-                            color="white", width="180px", height="45px", border_radius="10px",
-                            weight="bold", on_click=lambda: rx.window_alert("Add Quiz Clicked")
-                        ),
-                        rx.button(
-                            "Edit Quiz", padding="10px", background_color="#6EA9C5",
-                            color="white", width="180px", height="45px", border_radius="10px",
-                            weight="bold", on_click=lambda: rx.window_alert("Edit Quiz Clicked")
-                        ),
-                        # rx.button(
-                        #     "Grade Quiz", padding="10px", background_color="#6EA9C5",
-                        #     color="white", width="180px", height="45px", border_radius="10px",
-                        #     weight="bold", on_click=lambda: QuizState.grade_quiz()
-                        # ),
-                        rx.button(
-                            "View Submitted Works", padding="10px", background_color="#6EA9C5",
-                            color="white", width="180px", height="45px", border_radius="10px",
-                            weight="bold", on_click=rx.redirect("/manage_submitted_works")
-                        ),
-                        spacing="5",
-                        align="center",
-                        margin_top="10px"  # Adds space between the container and buttons
-                    ),
-                    align="center",
-                    spacing="3"
+                    # rx.vstack(
+                    #     rx.button(
+                    #         "Add Quiz", padding="10px", background_color="#6EA9C5",
+                    #         color="white", width="180px", height="45px", border_radius="10px",
+                    #         weight="bold", on_click=lambda: rx.window_alert("Add Quiz Clicked")
+                    #     ),
+                    #     rx.button(
+                    #         "Edit Quiz", padding="10px", background_color="#6EA9C5",
+                    #         color="white", width="180px", height="45px", border_radius="10px",
+                    #         weight="bold", on_click=lambda: rx.window_alert("Edit Quiz Clicked")
+                    #     ),
+                    #     # rx.button(
+                    #     #     "Grade Quiz", padding="10px", background_color="#6EA9C5",
+                    #     #     color="white", width="180px", height="45px", border_radius="10px",
+                    #     #     weight="bold", on_click=lambda: QuizState.grade_quiz()
+                    #     # ),
+                    #     rx.button(
+                    #         "View Submitted Works", padding="10px", background_color="#6EA9C5",
+                    #         color="white", width="180px", height="45px", border_radius="10px",
+                    #         weight="bold", on_click=rx.redirect("/manage_submitted_works")
+                    #     ),
+                    #     spacing="5",
+                    #     align="center",
+                    #     margin_top="10px"  # Adds space between the container and buttons
+                    # ),
+                    # align="center",
+                    # spacing="3"
                 ),
 
                 # Your Work Container
