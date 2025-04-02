@@ -140,8 +140,14 @@ def assignment_details() -> rx.Component:
                                 rx.dialog.description("Select your assignment file"),
                                 rx.upload(
                                     rx.vstack(
-                                        rx.button("Select File"),
-                                        rx.text("Drag and drop files here or click to select files"),
+                                        rx.button(
+                                            "Select File",
+                                        ),
+                                        rx.text(
+                                            "Drag and drop files here or click to select files"
+                                        ),
+                                        align="center",  # Center align the vstack contents
+                                        spacing="4",
                                     ),
                                     id="assignment_upload",
                                     accept={
@@ -150,6 +156,8 @@ def assignment_details() -> rx.Component:
                                         "image/jpeg": [".jpg", ".jpeg"]
                                     },
                                     max_files=1,
+                                    border="1px dotted rgb(107,99,246)",
+                                    padding="5em",
                                     on_drop=AssignmentState.handle_upload(
                                         rx.upload_files(upload_id="assignment_upload")
                                     ),
@@ -169,6 +177,7 @@ def assignment_details() -> rx.Component:
                                     justify="end",
                                 ),
                                 max_width="450px",
+                                align="center",  # Center align the dialog content
                             ),
                         ),
                         rx.button(

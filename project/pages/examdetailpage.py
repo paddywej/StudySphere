@@ -146,12 +146,18 @@ def exam_details() -> rx.Component:
                                 ),
                             ),
                             rx.dialog.content(
-                                rx.dialog.title("Upload File"),
-                                rx.dialog.description("Select your file"),
+                                rx.dialog.title("Upload Exam"),
+                                rx.dialog.description("Select your exam file"),
                                 rx.upload(
                                     rx.vstack(
-                                        rx.button("Select File"),
-                                        rx.text("Drag and drop files here or click to select files"),
+                                        rx.button(
+                                            "Select File",
+                                        ),
+                                        rx.text(
+                                            "Drag and drop files here or click to select files"
+                                        ),
+                                        align="center",  # Center align the vstack contents
+                                        spacing="4",
                                     ),
                                     id="exam_upload",
                                     accept={
@@ -160,6 +166,8 @@ def exam_details() -> rx.Component:
                                         "image/jpeg": [".jpg", ".jpeg"]
                                     },
                                     max_files=1,
+                                    border="1px dotted rgb(107,99,246)",
+                                    padding="5em",
                                     on_drop=ExamState.handle_upload(
                                         rx.upload_files(upload_id="exam_upload")
                                     ),
@@ -173,12 +181,13 @@ def exam_details() -> rx.Component:
                                         ),
                                     ),
                                     rx.dialog.close(
-                                        rx.button("Confirm", type="submit"),
+                                        rx.button("Submit", type="submit"),
                                     ),
                                     spacing="3",
                                     justify="end",
                                 ),
                                 max_width="450px",
+                                align="center",  # Center align the dialog content
                             ),
                         ),
                         rx.button(

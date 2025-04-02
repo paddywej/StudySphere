@@ -147,12 +147,18 @@ def quiz_details() -> rx.Component:
                                 ),
                             ),
                             rx.dialog.content(
-                                rx.dialog.title("Upload File"),
-                                rx.dialog.description("Select your file"),
+                                rx.dialog.title("Upload Quiz"),
+                                rx.dialog.description("Select your quiz file"),
                                 rx.upload(
                                     rx.vstack(
-                                        rx.button("Select File"),
-                                        rx.text("Drag and drop files here or click to select files"),
+                                        rx.button(
+                                            "Select File",
+                                        ),
+                                        rx.text(
+                                            "Drag and drop files here or click to select files"
+                                        ),
+                                        align="center",  # Center align the vstack contents
+                                        spacing="4",
                                     ),
                                     id="quiz_upload",
                                     accept={
@@ -161,6 +167,8 @@ def quiz_details() -> rx.Component:
                                         "image/jpeg": [".jpg", ".jpeg"]
                                     },
                                     max_files=1,
+                                    border="1px dotted rgb(107,99,246)",
+                                    padding="5em",
                                     on_drop=QuizState.handle_upload(
                                         rx.upload_files(upload_id="quiz_upload")
                                     ),
@@ -180,6 +188,7 @@ def quiz_details() -> rx.Component:
                                     justify="end",
                                 ),
                                 max_width="450px",
+                                align="center",  # Center align the dialog content
                             ),
                         ),
                         rx.button(
