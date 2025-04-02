@@ -1,4 +1,5 @@
 import reflex as rx
+# from project.pages.login import FormState
 
 def navbar_link(text: str, url: str) -> rx.Component:
     return rx.link(
@@ -49,7 +50,8 @@ def navbar() -> rx.Component:
                     # User text with dropdown menu
                     rx.menu.root(
                         rx.menu.trigger(
-                            rx.text("User", font_size="1.2em", color="white", cursor="pointer")  # Added cursor pointer to user text
+                            rx.text("User", font_size="1.2em", color="white", cursor="pointer"),
+                            # rx.text(FormState.user_id, font_size="1.2em", color="white", cursor="pointer"),
                         ),
                         rx.menu.content(
                             rx.menu.item("Settings", cursor="pointer"),  # Added cursor pointer
@@ -104,7 +106,8 @@ def navbar() -> rx.Component:
                     # User text with dropdown menu for mobile/tablet version
                     rx.menu.root(
                         rx.menu.trigger(
-                            rx.text("User", font_size="1.2em", color="white", cursor="pointer")  # Added cursor pointer to user text
+                            rx.text("User", font_size="1.2em", color="white", cursor="pointer"),
+                            # rx.text(FormState.user_id, font_size="1.2em", color="white", cursor="pointer"),
                         ),
                         rx.menu.content(
                             rx.menu.item("Settings", cursor="pointer"),  # Added cursor pointer

@@ -7,8 +7,12 @@ from .database import SessionLocal, get_db
 from .models import *
 from passlib.context import CryptContext
 from pydantic import BaseModel
+from typing import Optional
+import reflex as rx
+from fastapi import Request
 
 app = FastAPI()
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,11 +31,30 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
+# Utility to verify passwords
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
 # Request Model
 class RegisterRequest(BaseModel):
     user_id: str
     password: str
     role: str
+
+class LoginRequest(BaseModel):
+    user_id: str
+    password: str
+    role: str
+
+@app.websocket("/_event/")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await websocket.send_text(f"Message received: {data}")
+    except WebSocketDisconnect:
+        print("Client disconnected")
 
 @app.post("/register")
 def register_user(request: RegisterRequest, db: Session = Depends(get_db)):
@@ -57,47 +80,42 @@ def register_user(request: RegisterRequest, db: Session = Depends(get_db)):
 
     return {"message": "Registration successful"}
 
+@app.post("/login")
+def login(request: LoginRequest, db: Session = Depends(get_db)):
+    if request.role == "Student":
+        user = db.query(Student).filter(Student.student_id == request.user_id).first()
+        
+    elif request.role == "Professor":
+        user = db.query(Professor).filter(Professor.professor_id == request.user_id).first()
+        
+    else:
+        raise HTTPException(status_code=400, detail="Invalid role selected.")
 
-@app.websocket("/_event/")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    try:
-        while True:
-            data = await websocket.receive_text()
-            await websocket.send_text(f"Message received: {data}")
-    except WebSocketDisconnect:
-        print("Client disconnected")
+    if not user or not verify_password(request.password, user.password):
+        raise HTTPException(status_code=400, detail="Invalid username or password.")
 
-# Create Student
-@app.post("/students/", response_model=schemas.StudentResponse)
-def create_student(student: schemas.StudentCreate, db: Session = Depends(get_db)):
-    new_student = models.Student(**student.dict())
-    db.add(new_student)
-    db.commit()
-    db.refresh(new_student)
-    return new_student
+    
 
-# Get Students
-@app.get("/students/", response_model=list[schemas.StudentResponse])
-def get_students(db: Session = Depends(get_db)):
-    return db.query(models.Student).all()
+    return {"message": "Login successful", "user_id": request.user_id, "role": request.role}
 
-# Create Grade
-@app.post("/grades/", response_model=schemas.GradeResponse)
-def create_grade(grade: schemas.GradeCreate, db: Session = Depends(get_db)):
-    new_grade = models.Grade(**grade.dict())
-    db.add(new_grade)
-    db.commit()
-    db.refresh(new_grade)
-    return new_grade
+@app.post("/logout")
+def logout(request):
+    usersession.set("","",False)
 
-@app.post("/subjects/", response_model=schemas.SubjectResponse)
-def create_subject(subject: schemas.SubjectCreate, db: Session = Depends(get_db)):
-    db_subject = models.Subject(**subject.dict())
-    db.add(db_subject)
-    db.commit()
-    db.refresh(db_subject)
-    return db_subject
+    return {"message": "Logged out successfully."}
+
+@app.get("/students/{user_id}/year")
+def get_year(user_id: str, db: Session = Depends(get_db)):
+    # Query the database to find the student by user_id
+    student = db.query(Student).filter(Student.student_id == user_id).first()
+
+    # If student does not exist, raise HTTPException
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    # Return as a dictionary (JSON format)
+    return {"year": student.year, "track": student.track}
+
 
 @app.get("/subjects/{subject_id}", response_model=schemas.SubjectResponse)
 def get_subject(subject_id: int, db: Session = Depends(get_db)):
@@ -107,8 +125,17 @@ def get_subject(subject_id: int, db: Session = Depends(get_db)):
     return subject
 
 @app.get("/subjects/{year}/{semester}")
-def get_subjects(year: int, semester: int, db: Session = Depends(get_db)):
-    """Fetch subjects based on year and semester."""
+def get_subjects(year: int, semester: int, track: str | None = None, db: Session = Depends(get_db)):
     subjects = db.query(Subject).filter(Subject.year == year, Subject.semester == semester).all()
-    return [subject.subject_name for subject in subjects] 
 
+    # If track is specified, filter by track as well
+    if track:
+        track_subjects = db.query(Subject).filter(
+            Subject.year == year, Subject.semester == semester, Subject.track == track
+        ).all()
+        subjects.extend(track_subjects)
+
+    if not subjects:
+        raise HTTPException(status_code=404, detail="No subjects found")
+
+    return [subject.subject_name for subject in subjects]

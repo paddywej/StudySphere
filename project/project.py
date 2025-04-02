@@ -6,6 +6,7 @@ from project.components.SearchBar import search_bar
 from project.pages.homepage import menu_year
 from project.pages.register import register
 from project.pages.login import login
+from project.pages.subjectpage import Subjects
 from project.pages.year1 import Year1
 from project.pages.year2 import Year2
 from project.pages.year3 import Year3
@@ -228,6 +229,16 @@ def index() -> rx.Component:
         # bg="white"
     )
 
+def subject_page() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(),
+            Subjects(),
+        ),
+        bg="white"
+        
+    )
+
 def year1() -> rx.Component:
     return rx.container(
         rx.vstack(
@@ -340,6 +351,7 @@ app.add_page(index, route="/")
 app.add_page(register_page, route="/register")
 app.add_page(login_page, route="/login")
 app.add_page(HomePage, route="/home")
+app.add_page(subject_page, route="/subject")
 app.add_page(year1, route="/year1")
 app.add_page(year2, route="/year2")
 app.add_page(year3, route="/year3")
