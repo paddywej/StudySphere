@@ -29,54 +29,55 @@ def fetch_assignments_data() -> list:
     ]
     return assignments_data
 
+# In your State class:
+class State(rx.State):
+    assignment_to_delete: str = ""
+    assignments: list[dict[str, list[dict[str, str]]]] = fetch_assignments_data()
+
+    def add_assignment(self, form_data: dict):
+        self.assignments.append(form_data)
+        return rx.toast.info(
+            f"Assignment {form_data['assignment_name']} has been added.",
+            position="bottom-right",
+        )
+
+    def delete_assignment(self):
+        # Filter out the assignment with matching name and update state
+        self.assignments = [
+            a for a in self.assignments 
+            if a["assignment_name"] != self.assignment_to_delete
+        ]
+        return rx.toast.info(
+            f"Assignment {self.assignment_to_delete} has been deleted.",
+            position="bottom-right",
+        )
+
+
+
 def create_assignment_container(assignment_title: str, due_date: str, student_data: list) -> rx.Component:
     """Creates a scrollable container with student assignment data."""
     return rx.box(
         rx.text(f"{assignment_title} - {due_date}", font_size="24px", font_weight="bold", color="black", text_align="center", margin_bottom="1rem"),
         rx.vstack(
-            *[
-                rx.hstack(
+            rx.foreach(
+                student_data,
+                lambda student: rx.hstack(
                     rx.box(
                         rx.text(student["name"], font_size="16px"),
-                        width="33%",
-                        padding="10px",
-                        background_color="#effaff",
-                        color="black",
-                        border_radius="4px",
-                        height="50px",
-                        display="flex",
-                        align_items="center",
-                        justify_content="center"
+                        width="33%", padding="10px", background_color="#effaff", color="black", border_radius="4px", height="50px", display="flex", align_items="center", justify_content="center"
                     ),
                     rx.box(
                         rx.text(student["file"], font_size="16px"),
-                        width="33%",
-                        padding="10px",
-                        background_color="#effaff",
-                        color="black",
-                        border_radius="4px",
-                        height="50px",
-                        display="flex",
-                        align_items="center",
-                        justify_content="center"
+                        width="33%", padding="10px", background_color="#effaff", color="black", border_radius="4px", height="50px", display="flex", align_items="center", justify_content="center"
                     ),
                     rx.box(
                         rx.input(placeholder="Enter grade", width="100%", bg="white", border_radius="4px"),
-                        width="33%",
-                        padding="10px",
-                        background_color="#effaff",
-                        border_radius="4px",
-                        height="50px",
-                        display="flex",
-                        align_items="center",
-                        justify_content="center"
+                        width="33%", padding="10px", background_color="#effaff", border_radius="4px", height="50px", display="flex", align_items="center", justify_content="center"
                     ),
-                    spacing="2",
-                    align="center"
-                ) for student in student_data
-            ],
-            spacing="2",
-            align_items="center"
+                    spacing="2", align="center"
+                )
+            ),
+            spacing="2", align_items="center"
         ),
         height="450px",
         width="100%",
@@ -86,34 +87,9 @@ def create_assignment_container(assignment_title: str, due_date: str, student_da
         overflow_y="scroll",
     )
 
-# In your State class:
-class State(rx.State):
-    assignment_to_delete: str = ""  # Add this state var
-    assignments: list[dict] = []  # Store assignments
 
-    def add_assignment(self, form_data: dict):
-        # Handle the form submission here
-        self.assignments.append(form_data)
-        return rx.toast.info(
-            f"Assignment {form_data['assignment_name']} has been added.",
-            position="bottom-right",
-        )
-
-    def delete_assignment(self):
-        # Filter out the assignment with matching name
-        self.assignments = [
-            a for a in self.assignments 
-            if a["assignment_name"] != self.assignment_to_delete
-        ]
-        return rx.toast.info(
-            f"Assignment {self.assignment_to_delete} has been deleted.",
-            position="bottom-right",
-        )
-        
 def all_assignments() -> rx.Component:
     """Creates the main assignments page layout with scrollable containers."""
-    assignments_data = fetch_assignments_data()
-    
     return rx.box(
         rx.vstack(
             # Title section
@@ -145,7 +121,7 @@ def all_assignments() -> rx.Component:
                                 rx.input(
                                     type="file",
                                     name="file",
-                                    accept=".pdf,.doc,.docx"
+                                    accept=".pdf,.doc,.docx,.png,.py,.zip"
                                 ),
                                 rx.flex(
                                     rx.alert_dialog.cancel(
@@ -217,15 +193,16 @@ def all_assignments() -> rx.Component:
                 margin_top="1rem"
             ),
 
-            # Assignments list
+            # Assignments list - Use rx.foreach to dynamically render the assignments
             rx.vstack(
-                *[
-                    create_assignment_container(
+                rx.foreach(
+                    State.assignments,  # Dynamically render the assignments from state
+                    lambda assignment: create_assignment_container(
                         assignment["assignment_name"],
                         assignment["due_date"],
                         assignment["students"]
-                    ) for assignment in assignments_data
-                ],
+                    )
+                ),
                 spacing="6",
                 align="center"
             ),
