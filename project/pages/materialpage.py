@@ -1,85 +1,181 @@
 import reflex as rx
 
-def create_container(title: str, items: list) -> rx.Component:
-    """Creates a scrollable container with space for textbooks or notes."""
+class MaterialsState(rx.State):
+    """Manages materials-related state."""
+    
+    material_file: str = ""  # Stores uploaded file name
+    selected_category: str = ""  # Stores selected category (Textbook or Notes)
+
+    textbooks: list[str] = []  # List to store textbook files
+    notes: list[str] = []  # List to store note files
+
+    def set_category(self, category: str):
+        """Sets the category before uploading."""
+        self.selected_category = category
+
+    async def handle_upload(self, files: list[rx.UploadFile]):
+        """Handles file upload and sorts into correct category."""
+        if not self.selected_category:
+            rx.window_alert("Please select a category before uploading.")
+            return
+
+        for file in files:
+            upload_data = await file.read()
+            outfile = rx.get_upload_dir() / file.filename
+            with outfile.open("wb") as file_object:
+                file_object.write(upload_data)
+            self.material_file = file.filename
+
+            # Add the file to the correct list
+            if self.selected_category == "Textbook":
+                self.textbooks.append(file.filename)
+            elif self.selected_category == "Notes":
+                self.notes.append(file.filename)
+
+            rx.window_alert(f"Successfully uploaded to {self.selected_category}: {file.filename}")
+
+    def remove_file(self, file_name: str):
+        """Removes a file from the correct category list."""
+        if file_name in self.textbooks:
+            self.textbooks.remove(file_name)
+        elif file_name in self.notes:
+            self.notes.remove(file_name)
+
+def create_materials_container(title: str, items_var) -> rx.Component:
+    """Creates a container for materials with clickable links and delete buttons."""
     return rx.box(
-        # Title for the section (Textbooks or Notes)
-        rx.text(title, font_size="18px", font_weight="bold", color="white"),
-        # Content that will exceed the container to make it scrollable
-        rx.vstack(
-            *[rx.box(item, padding="8px", background_color="#f8f8f8", border_radius="5px") for item in items],
-            spacing="9"
+        rx.box(
+            rx.text(title, font_size="18px", font_weight="bold", color="#1d2023"),
+            position="relative",
+            width="100%",
         ),
-        height="450px",  # Container height
-        width="450px",  # Reduced width for better centering
-        background_color="#598da2",  # Container background color
-        border_radius="25px",  # Increased border radius for more rounded corners
-        padding="10px",  # Reduced padding inside the container
-        overflow_y="scroll",  # Enable vertical scrolling when content overflows
+        rx.vstack(
+            rx.foreach(
+                items_var,
+                lambda item: rx.hstack(
+                    rx.link(
+                        item,  # Display file name
+                        href=rx.get_upload_url(item),  # Open file in new tab
+                        target="_blank",
+                        padding="8px",
+                        background_color="#f8f8f8",
+                        border_radius="5px",
+                        text_decoration="none",
+                        color="#0073e6",
+                        _hover={"text_decoration": "underline"},
+                    ),
+                    rx.button(
+                        "❌",  # Delete button
+                        on_click=lambda: MaterialsState.remove_file(item),
+                        background_color="transparent",
+                        color="red",
+                        font_size="14px",
+                        padding="2px 5px",
+                        border="none",
+                        _hover={"color": "darkred"},
+                    ),
+                    spacing="3",  # Reduced spacing between file links and buttons
+                ),
+            ),
+            spacing="5"  # Reduced overall spacing between the items
+        ),
+        height="450px",
+        width="450px",
+        background_color="#d0e2eb",
+        border_radius="25px",
+        padding="10px",
+        overflow_y="scroll",
+        position="relative",
     )
 
 def materials() -> rx.Component:
-    """Creates the main page layout with two scrollable containers: one for textbooks and one for notes."""
-    textbooks = ["Textbook 1", "Textbook 2", "Textbook 3", "Textbook 4", "Textbook 5"]  # Example list of textbooks
-    notes = ["Lecture 1 Notes", "Lecture 2 Notes", "Lecture 3 Notes", "Lecture 4 Notes", "Lecture 5 Notes"]  # Example list of notes
-    
+    """Dynamic materials page with containers, file upload, and delete functionality."""
     return rx.box(
         rx.vstack(
-            rx.text("Materials", font_size="24px", font_weight="bold", color="#598da2"),
-            rx.vstack(  # Vertical stack for materials and buttons
-                rx.hstack(  # Horizontal stack for the containers (Textbooks and Notes)
-                    create_container("Textbooks", textbooks),  # Container for textbooks
-                    create_container("Notes", notes),  # Container for notes
-                    spacing="9",  # Space between containers
-                    justify="center",  # Center the containers horizontally
+            rx.text("Course Materials", font_size="24px", font_weight="bold", color="#598da2"),
+            
+            rx.hstack(
+                rx.vstack(
+                    create_materials_container("Textbooks", MaterialsState.textbooks),
                 ),
-                # Action buttons below the containers
-                rx.hstack(
+                rx.vstack(
+                    create_materials_container("Notes", MaterialsState.notes),
+                ),
+                spacing="5",  # Reduced spacing between the two containers
+                justify="center",
+            ),
+            
+            # Upload Button & Dialog
+            rx.dialog.root(
+                rx.dialog.trigger(
                     rx.button(
-                        "Upload Material", 
-                        padding="15px", 
-                        background_color="#6EA9C5", 
-                        color="white", 
-                        width="200px", 
-                        height="50px", 
-                        border_radius="10px", 
-                        weight="bold"
+                        "Upload File", padding="10px", background_color="#6EA9C5",
+                        color="white", width="180px", height="45px", border_radius="10px",
+                        weight="bold",
                     ),
-                    rx.button(
-                        "Edit Material", 
-                        padding="15px", 
-                        background_color="#6EA9C5", 
-                        color="white", 
-                        width="200px", 
-                        height="50px", 
-                        border_radius="10px", 
-                        weight="bold"
+                ),
+                rx.dialog.content(
+                    rx.dialog.title("Upload Material"),
+                    rx.dialog.description("Select a category and upload your file"),
+                    
+                    # Dropdown for category selection
+                    rx.select(
+                        ["Textbook", "Notes"],
+                        name="role",
+                        placeholder="Select Category",
+                        border_radius="20px",
+                        border="none",
+                        color="black",
+                        background_color="#EFFAFF",
+                        width="20rem",
+                        height="2.4rem",
+                        on_change=MaterialsState.set_category,  
                     ),
-                    rx.button(
-                        "Delete Material", 
-                        padding="15px", 
-                        background_color="#6EA9C5", 
-                        color="white", 
-                        width="200px", 
-                        height="50px", 
-                        border_radius="10px", 
-                        weight="bold"
+                    
+                    # Upload Component
+                    rx.upload(
+                        rx.vstack(
+                            rx.button("Select File"),
+                            rx.text("Drag and drop files here or click to select"),
+                            align="center",
+                            spacing="4",
+                        ),
+                        id="material_upload",
+                        accept={ 
+                            "application/pdf": [".pdf"],
+                            "image/png": [".png"],
+                            "image/jpeg": [".jpg", ".jpeg"]
+                        },
+                        max_files=1,
+                        border="1px dotted rgb(107,99,246)",
+                        padding="5em",
+                        on_drop=MaterialsState.handle_upload(rx.upload_files(upload_id="material_upload")),
                     ),
-                    spacing="9",  # Space between buttons
-                    justify="center",  # Center the buttons horizontally
-                    align_items="center",  # Vertically center the buttons
-                    margin_top="40px",  # Space between containers and buttons
-                    margin_left="13%",  # Added left margin to shift buttons away from the left
+                    
+                    # Buttons for confirmation and cancellation
+                    rx.flex(
+                        rx.dialog.close(
+                            rx.button("Cancel", variant="soft", color_scheme="gray"),
+                        ),
+                        rx.dialog.close(
+                            rx.button("Confirm", type="submit"),
+                        ),
+                        spacing="3",
+                        justify="end",
+                    ),
+                    max_width="450px",
+                    align="center",
                 ),
             ),
-            spacing="6",  # Space between the title and materials content
-            align_items="center",  # Align everything in the center
+            
+            spacing="6",
+            align_items="center",
         ),
         width="100%",
         min_height="100vh",
         display="flex",
-        justify_content="center",  # Center everything horizontally
-        align_items="center",  # Center everything vertically
+        justify_content="center",
+        align_items="center",
         padding_top="7rem",
         margin_left="7rem",
     )
