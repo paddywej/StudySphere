@@ -181,7 +181,7 @@ def exam_details() -> rx.Component:
                                         ),
                                     ),
                                     rx.dialog.close(
-                                        rx.button("Submit", type="submit"),
+                                        rx.button("Confirm", type="submit"),
                                     ),
                                     spacing="3",
                                     justify="end",
