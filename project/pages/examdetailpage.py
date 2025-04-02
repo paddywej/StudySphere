@@ -34,6 +34,16 @@ class ExamState(rx.State):
         """View the submitted works."""
         rx.window_alert("Viewing Submitted Works")
 
+    async def handle_upload(self, files: list[rx.UploadFile]):
+        """Handle the upload of file(s)."""
+        for file in files:
+            upload_data = await file.read()
+            outfile = rx.get_upload_dir() / file.filename
+            # Save the file
+            with outfile.open("wb") as file_object:
+                file_object.write(upload_data)
+            self.user_file = file.filename
+
 def create_container(title: str, items: list, extra_content: rx.Component = None) -> rx.Component:
     """Creates a scrollable container for assignment-related content."""
     return rx.box(
@@ -122,10 +132,54 @@ def exam_details() -> rx.Component:
                         )
                     ),
                     rx.vstack(
-                        rx.button(
-                            "Upload your file", padding="10px", background_color="#6EA9C5",
-                            color="white", width="180px", height="45px", border_radius="10px",
-                            weight="bold", on_click=lambda: ExamState.upload_file("sample_exam.pdf")
+                        rx.dialog.root(
+                            rx.dialog.trigger(
+                                rx.button(
+                                    "Upload your file", 
+                                    padding="10px", 
+                                    background_color="#6EA9C5",
+                                    color="white", 
+                                    width="180px", 
+                                    height="45px", 
+                                    border_radius="10px",
+                                    weight="bold",
+                                ),
+                            ),
+                            rx.dialog.content(
+                                rx.dialog.title("Upload File"),
+                                rx.dialog.description("Select your file"),
+                                rx.upload(
+                                    rx.vstack(
+                                        rx.button("Select File"),
+                                        rx.text("Drag and drop files here or click to select files"),
+                                    ),
+                                    id="exam_upload",
+                                    accept={
+                                        "application/pdf": [".pdf"],
+                                        "image/png": [".png"],
+                                        "image/jpeg": [".jpg", ".jpeg"]
+                                    },
+                                    max_files=1,
+                                    on_drop=ExamState.handle_upload(
+                                        rx.upload_files(upload_id="exam_upload")
+                                    ),
+                                ),
+                                rx.flex(
+                                    rx.dialog.close(
+                                        rx.button(
+                                            "Cancel",
+                                            variant="soft",
+                                            color_scheme="gray",
+                                        ),
+                                    ),
+                                    rx.dialog.close(
+                                        rx.button("Confirm", type="submit"),
+                                    ),
+                                    spacing="3",
+                                    justify="end",
+                                ),
+                                max_width="450px",
+                            ),
                         ),
                         rx.button(
                             "Submit", padding="10px", background_color="#6EA9C5",
