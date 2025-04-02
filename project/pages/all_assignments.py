@@ -71,7 +71,7 @@ def create_assignment_container(assignment_title: str, due_date: str, student_da
                         width="33%", padding="10px", background_color="#effaff", color="black", border_radius="4px", height="50px", display="flex", align_items="center", justify_content="center"
                     ),
                     rx.box(
-                        rx.input(placeholder="Enter grade", width="100%", bg="white", border_radius="4px"),
+                        rx.input(placeholder="Enter score", width="100%", bg="white", border_radius="4px", color="black"),
                         width="33%", padding="10px", background_color="#effaff", border_radius="4px", height="50px", display="flex", align_items="center", justify_content="center"
                     ),
                     spacing="2", align="center"

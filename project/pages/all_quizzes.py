@@ -55,7 +55,7 @@ def create_quiz_container(quiz_title: str, due_date: str, student_data: list) ->
                         justify_content="center"
                     ),
                     rx.box(
-                        rx.input(placeholder="Enter score", width="100%", bg="white", border_radius="4px"),
+                        rx.input(placeholder="Enter score", width="100%", bg="white", border_radius="4px", color="black"),
                         width="33%",
                         padding="10px",
                         background_color="#effaff",
