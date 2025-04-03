@@ -6,7 +6,7 @@ def fetch_assignments_data() -> list:
     assignments_data = [
         {
             "assignment_name": "Math Assignment 1",
-            "due_date": "2025-09-03",
+            "due_date": "2025-09-03", 
             "students": [
                 {"name": "Student 1", "file": "Assignment1.pdf"},
                 {"name": "Student 2", "file": "Assignment1.pdf"},
@@ -34,7 +34,7 @@ class State(rx.State):
         self.assignments = self.assignments + [{
             "assignment_name": form_data["assignment_name"],
             "due_date": form_data["due_date"],
-            "students": []  # Handle file uploads if needed
+            "students": []
         }]
         return rx.toast.info(
             f"Assignment {form_data['assignment_name']} has been added.",
@@ -44,7 +44,7 @@ class State(rx.State):
     def delete_assignment(self):
         """Delete an assignment and trigger re-render"""
         self.assignments = [
-            a for a in self.assignments
+            a for a in self.assignments 
             if a["assignment_name"] != self.assignment_to_delete
         ]
         return rx.toast.info(
@@ -60,20 +60,23 @@ class State(rx.State):
 
     def edit_assignment(self):
         """Update the assignment details in the state"""
-        # Find the assignment that needs to be edited
         for assignment in self.assignments:
             if assignment["assignment_name"] == self.edited_assignment_name:
-                # Update the assignment details
                 assignment["assignment_name"] = self.edited_assignment_name
                 assignment["due_date"] = self.edited_due_date
                 break
         
-        # After editing, trigger a success message
         return rx.toast.success(
             f"Assignment updated to {self.edited_assignment_name}.",
             position="bottom-right",
         )
 
+    def submit_grades(self):
+        """Handle grade submission."""
+        return rx.toast.success(
+            "Grades submitted successfully.",
+            position="bottom-right",
+        )
 
 def create_assignment_container(assignment_title: str, due_date: str, student_data: List[Dict[str, str]], file_name: str = "No file uploaded") -> rx.Component:
     """Creates a container for each assignment with editable options."""
@@ -82,7 +85,6 @@ def create_assignment_container(assignment_title: str, due_date: str, student_da
             # Assignment Title and Due Date in one row
             rx.hstack(
                 rx.text(f"{assignment_title} - {due_date}", font_size="20px", font_weight="bold", color="black"),
-                # Add spacer to push edit button to the right
                 rx.spacer(),
                 
                 # Edit Button that triggers a pop-up dialog
@@ -122,7 +124,7 @@ def create_assignment_container(assignment_title: str, due_date: str, student_da
                                     rx.button(
                                         "Save Changes",
                                         color_scheme="blue",
-                                        on_click=State.edit_assignment,  # Update the assignment on Save
+                                        on_click=State.edit_assignment,
                                     ),
                                     justify="space-between",
                                 ),
@@ -134,14 +136,12 @@ def create_assignment_container(assignment_title: str, due_date: str, student_da
                         max_width="450px",
                     ),
                 ),
-                # Set width to full to ensure hstack takes entire container width
                 width="100%",
-                # Ensure alignment of items within hstack
                 align_items="center",
                 justify_content="space-between",
             ),
             
-            # Professor's file section below the title
+            # Professor's file section
             rx.box(
                 rx.text(f"Professor's File: {file_name}", font_size="16px", font_style="italic", color="gray"),
                 padding="10px",
@@ -153,7 +153,7 @@ def create_assignment_container(assignment_title: str, due_date: str, student_da
                 text_align="left",
             ),
             
-            # Student List (Student ID, File, Score)
+            # Student List
             rx.vstack(
                 rx.foreach(
                     student_data,
@@ -164,7 +164,51 @@ def create_assignment_container(assignment_title: str, due_date: str, student_da
                         spacing="2", align="center"
                     )
                 ),
-                spacing="2", align_items="center"
+                spacing="2",
+                align_items="center"
+            ),
+            
+            # Submit Grades button at the bottom right
+            rx.hstack(
+                rx.spacer(),
+                rx.alert_dialog.root(
+                    rx.alert_dialog.trigger(
+                        rx.button(
+                            "Submit Grades",
+                            bg="#6EA9C5",
+                            color="white", 
+                            border_radius="8px",
+                            cursor="pointer"
+                        ),
+                    ),
+                    rx.alert_dialog.content(
+                        rx.alert_dialog.title("Submit Grades"),
+                        rx.alert_dialog.description(
+                            "Are you sure you want to submit the grades?"
+                        ),
+                        rx.flex(
+                            rx.alert_dialog.cancel(
+                                rx.button(
+                                    "Cancel",
+                                    variant="soft",
+                                    color_scheme="gray",
+                                ),
+                            ),
+                            rx.alert_dialog.action(
+                                rx.button(
+                                    "Submit",
+                                    color_scheme="blue",
+                                    on_click=State.submit_grades,
+                                ),
+                            ),
+                            spacing="3",
+                            justify="end",
+                        ),
+                    ),
+                ),
+                width="100%",
+                padding="10px",
+                margin_top="1rem",
             ),
         ),
         height="450px",
@@ -175,7 +219,6 @@ def create_assignment_container(assignment_title: str, due_date: str, student_da
         overflow_y="scroll",
     )
 
-
 def all_assignments() -> rx.Component:
     """Creates the main assignments page layout with scrollable containers."""
     return rx.box(
@@ -285,10 +328,10 @@ def all_assignments() -> rx.Component:
                 rx.foreach(
                     State.assignments,
                     lambda assignment: create_assignment_container(
-                        assignment["assignment_name"],  # Pass assignment_name
-                        assignment["due_date"],         # Pass due_date
-                        assignment["students"],         # Pass students list
-                        assignment.get("file_name", "No file uploaded")  # Handle missing file_name
+                        assignment["assignment_name"],
+                        assignment["due_date"],
+                        assignment["students"],
+                        assignment.get("file_name", "No file uploaded")
                     ),
                 ),
                 spacing="6",
@@ -298,138 +341,7 @@ def all_assignments() -> rx.Component:
             align_items="center"
         ),
         width="100%",
-        min_height="100vh", 
-        display="flex",
-        justify_content="center",
-        align_items="center",
-        margin_left="4rem",
-        padding_top="7rem",
-    )
-
-def all_assignments() -> rx.Component:
-    """Creates the main assignments page layout with scrollable containers."""
-    return rx.box(
-        rx.vstack(
-            rx.text("Assignments", font_size="35px", font_weight="bold", color="#598da2", text_align="center"),
-            
-            # Buttons on a new line
-            rx.hstack(
-                # Add Assignment Dialog
-                rx.alert_dialog.root(
-                    rx.alert_dialog.trigger(
-                        rx.button("Add Assignments", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
-                    ),
-                    rx.alert_dialog.content(
-                        rx.alert_dialog.title("Add Assignment"),
-                        rx.alert_dialog.description("Fill in the assignment details"),
-                        rx.form(
-                            rx.flex(
-                                rx.input(
-                                    placeholder="Assignment Name",
-                                    name="assignment_name", 
-                                    required=True
-                                ),
-                                rx.input(
-                                    placeholder="Due Date",
-                                    name="due_date",
-                                    type="date",
-                                    required=True
-                                ),
-                                rx.input(
-                                    type="file",
-                                    name="file",
-                                    accept=".pdf,.doc,.docx,.png,.py,.zip"
-                                ),
-                                rx.flex(
-                                    rx.alert_dialog.cancel(
-                                        rx.button(
-                                            "Cancel",
-                                            variant="soft",
-                                            color_scheme="gray",
-                                        ),
-                                    ),
-                                    rx.alert_dialog.action(
-                                        rx.button(
-                                            "Submit",
-                                            type="submit"
-                                        ),
-                                    ),
-                                    spacing="3",
-                                    justify="end",
-                                ),
-                                direction="column",
-                                spacing="4",
-                            ),
-                            on_submit=State.add_assignment,
-                            reset_on_submit=True,
-                        ),
-                        max_width="450px",
-                    ),
-                ),
-                
-                # Delete Assignment Dialog
-                rx.alert_dialog.root(
-                    rx.alert_dialog.trigger(
-                        rx.button("Delete Assignments", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
-                    ),
-                    rx.alert_dialog.content(
-                        rx.alert_dialog.title("Delete Assignment"),
-                        rx.alert_dialog.description("Enter the name of the assignment you want to delete."),
-                        rx.vstack(
-                            rx.input(
-                                placeholder="Assignment Name",
-                                on_change=State.set_assignment_to_delete,
-                                value=State.assignment_to_delete,
-                            ),
-                            rx.flex(
-                                rx.alert_dialog.cancel(
-                                    rx.button(
-                                        "Cancel",
-                                        variant="soft",
-                                        color_scheme="gray", 
-                                    ),
-                                ),
-                                rx.alert_dialog.action(
-                                    rx.button(
-                                        "Delete",
-                                        color_scheme="red",
-                                        on_click=State.delete_assignment,
-                                    ),
-                                ),
-                                spacing="3",
-                                justify="end",
-                            ),
-                            spacing="4",
-                        ),
-                        max_width="450px",
-                    ),
-                ),
-                spacing="4",
-                justify="center", 
-                width="100%",
-                margin_top="1rem"
-            ),
-
-            # Assignments list
-            rx.vstack(
-                rx.foreach(
-                    State.assignments,
-                    lambda assignment: create_assignment_container(
-                        assignment["assignment_name"],  # Pass assignment_name
-                        assignment["due_date"],         # Pass due_date
-                        assignment["students"],         # Pass students list
-                        assignment["file_name"]  # No need for `.get()` anymore
-
-                    ),
-                ),
-                spacing="6",
-                align="center"
-            ),
-            spacing="6",
-            align_items="center"
-        ),
-        width="100%",
-        min_height="100vh", 
+        min_height="100vh",
         display="flex",
         justify_content="center",
         align_items="center",
