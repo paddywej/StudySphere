@@ -26,7 +26,12 @@ def notification_dialog():
                     rx.foreach(
                         NotificationState.notifications,
                         lambda notification: rx.box(
-                            rx.heading(notification["title"], size="3"),
+                            rx.heading(
+                                notification["title"], 
+                                size="3", 
+                                cursor="pointer", 
+                                on_click=lambda: handle_notification_click(notification["title"])  # Function reference, not execution
+                            ),
                             rx.text(notification["content"]),
                             padding="4",
                             border_bottom="1px solid #eee"
@@ -40,6 +45,23 @@ def notification_dialog():
             max_width="450px",
         ),
     )
+
+def handle_notification_click(title: str):
+    return rx.cond(
+        title == "New Assignment",
+        rx.redirect("/assignments"),
+        rx.cond(
+            title == "New Quiz",
+            rx.redirect("/quiz"),
+            rx.cond(
+                title == "New Exam",
+                rx.redirect("/exam"),
+                rx.toast.error("Unknown notification type.")  # Default case for unknown types
+            )
+        )
+    )
+
+
 
 def navbar_link(text: str, url: str) -> rx.Component:
     return rx.link(

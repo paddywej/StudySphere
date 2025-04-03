@@ -331,7 +331,7 @@ def all_assignments() -> rx.Component:
                         assignment["assignment_name"],
                         assignment["due_date"],
                         assignment["students"],
-                        assignment.get("file_name", "No file uploaded")
+                        assignment["file_name"],
                     ),
                 ),
                 spacing="6",

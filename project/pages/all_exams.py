@@ -1,23 +1,23 @@
 import reflex as rx
-import requests
+from typing import List, Dict
 
 def fetch_exams_data() -> list:
     """Simulate fetching multiple exams data from a backend."""
     exams_data = [
         {
-            "exam_name": "Math Final Exam",
+            "exam_name": "Math Exam 1",
             "due_date": "2025-09-03",
             "students": [
-                {"name": "Student 1", "file": "FinalExam1.pdf"},
-                {"name": "Student 2", "file": "FinalExam1.pdf"},
+                {"name": "Student 1", "file": "Exam1.pdf"},
+                {"name": "Student 2", "file": "Exam1.pdf"},
             ]
         },
         {
-            "exam_name": "Science Midterm",
-            "due_date": "2025-11-03", 
+            "exam_name": "Science Project 1",
+            "due_date": "2025-11-03",
             "students": [
-                {"name": "Student A", "file": "Midterm1.pdf"},
-                {"name": "Student B", "file": "Midterm1.pdf"},
+                {"name": "Student A", "file": "Project1.pdf"},
+                {"name": "Student B", "file": "Project1.pdf"},
             ]
         }
     ]
@@ -30,10 +30,11 @@ class State(rx.State):
     edited_due_date: str = ""
 
     def add_exam(self, form_data: dict):
+        """Add a new exam and trigger re-render"""
         self.exams = self.exams + [{
             "exam_name": form_data["exam_name"],
             "due_date": form_data["due_date"],
-            "students": []
+            "students": []  # Handle file uploads if needed
         }]
         return rx.toast.info(
             f"Exam {form_data['exam_name']} has been added.",
@@ -41,8 +42,9 @@ class State(rx.State):
         )
 
     def delete_exam(self):
+        """Delete an exam and trigger re-render"""
         self.exams = [
-            e for e in self.exams 
+            e for e in self.exams
             if e["exam_name"] != self.exam_to_delete
         ]
         return rx.toast.info(
@@ -50,9 +52,6 @@ class State(rx.State):
             position="bottom-right",
         )
 
-    def set_exam_to_delete(self, value: str):
-        self.exam_to_delete = value
-        
     def set_edited_exam_name(self, value: str):
         self.edited_exam_name = value
 
@@ -60,31 +59,33 @@ class State(rx.State):
         self.edited_due_date = value
 
     def edit_exam(self):
+        """Update the exam details in the state"""
+        # Find the exam that needs to be edited
         for exam in self.exams:
             if exam["exam_name"] == self.edited_exam_name:
+                # Update the exam details
                 exam["exam_name"] = self.edited_exam_name
                 exam["due_date"] = self.edited_due_date
                 break
+        
+        # After editing, trigger a success message
         return rx.toast.success(
             f"Exam updated to {self.edited_exam_name}.",
             position="bottom-right",
         )
 
-    def submit_grades(self):
-        return rx.toast.success(
-            "Grades submitted successfully.",
-            position="bottom-right",
-        )
 
-def create_exam_container(exam_title: str, due_date: str, student_data: list, file_name: str = "No file uploaded") -> rx.Component:
+def create_exam_container(exam_title: str, due_date: str, student_data: List[Dict[str, str]], file_name: str = "No file uploaded") -> rx.Component:
+    """Creates a container for each exam with editable options."""
     return rx.box(
         rx.vstack(
             # Exam Title and Due Date in one row
             rx.hstack(
                 rx.text(f"{exam_title} - {due_date}", font_size="20px", font_weight="bold", color="black"),
+                # Add spacer to push edit button to the right
                 rx.spacer(),
                 
-                # Edit Button with dialog
+                # Edit Button that triggers a pop-up dialog
                 rx.alert_dialog.root(
                     rx.alert_dialog.trigger(
                         rx.button("Edit", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
@@ -121,7 +122,7 @@ def create_exam_container(exam_title: str, due_date: str, student_data: list, fi
                                     rx.button(
                                         "Save Changes",
                                         color_scheme="blue",
-                                        on_click=State.edit_exam,
+                                        on_click=State.edit_exam,  # Update the exam on Save
                                     ),
                                     justify="space-between",
                                 ),
@@ -133,12 +134,14 @@ def create_exam_container(exam_title: str, due_date: str, student_data: list, fi
                         max_width="450px",
                     ),
                 ),
+                # Set width to full to ensure hstack takes entire container width
                 width="100%",
+                # Ensure alignment of items within hstack
                 align_items="center",
                 justify_content="space-between",
             ),
-
-            # Professor's file section
+            
+            # Professor's file section below the title
             rx.box(
                 rx.text(f"Professor's File: {file_name}", font_size="16px", font_style="italic", color="gray"),
                 padding="10px",
@@ -149,8 +152,8 @@ def create_exam_container(exam_title: str, due_date: str, student_data: list, fi
                 width="100%",
                 text_align="left",
             ),
-
-            # Student List
+            
+            # Student List (Student ID, File, Score)
             rx.vstack(
                 rx.foreach(
                     student_data,
@@ -161,51 +164,7 @@ def create_exam_container(exam_title: str, due_date: str, student_data: list, fi
                         spacing="2", align="center"
                     )
                 ),
-                spacing="2",
-                align_items="center"
-            ),
-
-            # Submit Grades button at bottom right
-            rx.hstack(
-                rx.spacer(),
-                rx.alert_dialog.root(
-                    rx.alert_dialog.trigger(
-                        rx.button(
-                            "Submit Grades",
-                            bg="#6EA9C5",
-                            color="white",
-                            border_radius="8px",
-                            cursor="pointer"
-                        ),
-                    ),
-                    rx.alert_dialog.content(
-                        rx.alert_dialog.title("Submit Grades"),
-                        rx.alert_dialog.description(
-                            "Are you sure you want to submit the grades?"
-                        ),
-                        rx.flex(
-                            rx.alert_dialog.cancel(
-                                rx.button(
-                                    "Cancel",
-                                    variant="soft",
-                                    color_scheme="gray",
-                                ),
-                            ),
-                            rx.alert_dialog.action(
-                                rx.button(
-                                    "Submit",
-                                    color_scheme="blue",
-                                    on_click=State.submit_grades,
-                                ),
-                            ),
-                            spacing="3",
-                            justify="end",
-                        ),
-                    ),
-                ),
-                width="100%",
-                padding="10px",
-                margin_top="1rem",
+                spacing="2", align_items="center"
             ),
         ),
         height="450px",
@@ -216,16 +175,19 @@ def create_exam_container(exam_title: str, due_date: str, student_data: list, fi
         overflow_y="scroll",
     )
 
+
 def all_exams() -> rx.Component:
+    """Creates the main exams page layout with scrollable containers."""
     return rx.box(
         rx.vstack(
             rx.text("Exams", font_size="35px", font_weight="bold", color="#598da2", text_align="center"),
             
-            # Action buttons
+            # Buttons on a new line
             rx.hstack(
+                # Add Exam Dialog
                 rx.alert_dialog.root(
                     rx.alert_dialog.trigger(
-                        rx.button("Add Exam", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
+                        rx.button("Add Exams", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
                     ),
                     rx.alert_dialog.content(
                         rx.alert_dialog.title("Add Exam"),
@@ -234,7 +196,7 @@ def all_exams() -> rx.Component:
                             rx.flex(
                                 rx.input(
                                     placeholder="Exam Name",
-                                    name="exam_name",
+                                    name="exam_name", 
                                     required=True
                                 ),
                                 rx.input(
@@ -275,9 +237,10 @@ def all_exams() -> rx.Component:
                     ),
                 ),
                 
+                # Delete Exam Dialog
                 rx.alert_dialog.root(
                     rx.alert_dialog.trigger(
-                        rx.button("Delete Exam", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
+                        rx.button("Delete Exams", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
                     ),
                     rx.alert_dialog.content(
                         rx.alert_dialog.title("Delete Exam"),
@@ -293,7 +256,7 @@ def all_exams() -> rx.Component:
                                     rx.button(
                                         "Cancel",
                                         variant="soft",
-                                        color_scheme="gray",
+                                        color_scheme="gray", 
                                     ),
                                 ),
                                 rx.alert_dialog.action(
@@ -312,7 +275,7 @@ def all_exams() -> rx.Component:
                     ),
                 ),
                 spacing="4",
-                justify="center",
+                justify="center", 
                 width="100%",
                 margin_top="1rem"
             ),
@@ -322,10 +285,11 @@ def all_exams() -> rx.Component:
                 rx.foreach(
                     State.exams,
                     lambda exam: create_exam_container(
-                        exam["exam_name"],
-                        exam["due_date"],
-                        exam["students"],
-                        exam.get("file_name", "No file uploaded")
+                        exam["exam_name"],  # Pass exam_name
+                        exam["due_date"],         # Pass due_date
+                        exam["students"],         # Pass students list
+                        exam["file_name"]  # No need for `.get()` anymore
+
                     ),
                 ),
                 spacing="6",
@@ -335,13 +299,10 @@ def all_exams() -> rx.Component:
             align_items="center"
         ),
         width="100%",
-        min_height="100vh",
+        min_height="100vh", 
         display="flex",
         justify_content="center",
         align_items="center",
         margin_left="4rem",
         padding_top="7rem",
     )
-
-app = rx.App()
-app.add_page(all_exams)

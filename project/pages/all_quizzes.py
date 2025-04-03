@@ -1,8 +1,8 @@
 import reflex as rx
-import requests
+from typing import List, Dict
 
 def fetch_quizzes_data() -> list:
-    """Simulate fetching multiple quiz data from a backend."""
+    """Simulate fetching multiple quizzes data from a backend."""
     quizzes_data = [
         {
             "quiz_name": "Math Quiz 1",
@@ -16,8 +16,8 @@ def fetch_quizzes_data() -> list:
             "quiz_name": "Science Quiz 1",
             "due_date": "2025-11-03",
             "students": [
-                {"name": "Student A", "file": "Quiz2.pdf"},
-                {"name": "Student B", "file": "Quiz2.pdf"},
+                {"name": "Student A", "file": "Quiz1.pdf"},
+                {"name": "Student B", "file": "Quiz1.pdf"},
             ]
         }
     ]
@@ -30,10 +30,11 @@ class State(rx.State):
     edited_due_date: str = ""
 
     def add_quiz(self, form_data: dict):
+        """Add a new quiz and trigger re-render"""
         self.quizzes = self.quizzes + [{
             "quiz_name": form_data["quiz_name"],
             "due_date": form_data["due_date"],
-            "students": []
+            "students": []  # Handle file uploads if needed
         }]
         return rx.toast.info(
             f"Quiz {form_data['quiz_name']} has been added.",
@@ -41,8 +42,9 @@ class State(rx.State):
         )
 
     def delete_quiz(self):
+        """Delete a quiz and trigger re-render"""
         self.quizzes = [
-            q for q in self.quizzes 
+            q for q in self.quizzes
             if q["quiz_name"] != self.quiz_to_delete
         ]
         return rx.toast.info(
@@ -50,9 +52,6 @@ class State(rx.State):
             position="bottom-right",
         )
 
-    def set_quiz_to_delete(self, value: str):
-        self.quiz_to_delete = value
-        
     def set_edited_quiz_name(self, value: str):
         self.edited_quiz_name = value
 
@@ -60,31 +59,33 @@ class State(rx.State):
         self.edited_due_date = value
 
     def edit_quiz(self):
+        """Update the quiz details in the state"""
+        # Find the quiz that needs to be edited
         for quiz in self.quizzes:
             if quiz["quiz_name"] == self.edited_quiz_name:
+                # Update the quiz details
                 quiz["quiz_name"] = self.edited_quiz_name
                 quiz["due_date"] = self.edited_due_date
                 break
+        
+        # After editing, trigger a success message
         return rx.toast.success(
             f"Quiz updated to {self.edited_quiz_name}.",
             position="bottom-right",
         )
 
-    def submit_grades(self):
-        return rx.toast.success(
-            "Grades submitted successfully.",
-            position="bottom-right",
-        )
 
-def create_quiz_container(quiz_title: str, due_date: str, student_data: list, file_name: str = "No file uploaded") -> rx.Component:
+def create_quiz_container(quiz_title: str, due_date: str, student_data: List[Dict[str, str]], file_name: str = "No file uploaded") -> rx.Component:
+    """Creates a container for each quiz with editable options."""
     return rx.box(
         rx.vstack(
             # Quiz Title and Due Date in one row
             rx.hstack(
                 rx.text(f"{quiz_title} - {due_date}", font_size="20px", font_weight="bold", color="black"),
+                # Add spacer to push edit button to the right
                 rx.spacer(),
                 
-                # Edit Button with dialog
+                # Edit Button that triggers a pop-up dialog
                 rx.alert_dialog.root(
                     rx.alert_dialog.trigger(
                         rx.button("Edit", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
@@ -121,7 +122,7 @@ def create_quiz_container(quiz_title: str, due_date: str, student_data: list, fi
                                     rx.button(
                                         "Save Changes",
                                         color_scheme="blue",
-                                        on_click=State.edit_quiz,
+                                        on_click=State.edit_quiz,  # Update the quiz on Save
                                     ),
                                     justify="space-between",
                                 ),
@@ -133,12 +134,14 @@ def create_quiz_container(quiz_title: str, due_date: str, student_data: list, fi
                         max_width="450px",
                     ),
                 ),
+                # Set width to full to ensure hstack takes entire container width
                 width="100%",
+                # Ensure alignment of items within hstack
                 align_items="center",
                 justify_content="space-between",
             ),
-
-            # Professor's file section
+            
+            # Professor's file section below the title
             rx.box(
                 rx.text(f"Professor's File: {file_name}", font_size="16px", font_style="italic", color="gray"),
                 padding="10px",
@@ -149,8 +152,8 @@ def create_quiz_container(quiz_title: str, due_date: str, student_data: list, fi
                 width="100%",
                 text_align="left",
             ),
-
-            # Student List
+            
+            # Student List (Student ID, File, Score)
             rx.vstack(
                 rx.foreach(
                     student_data,
@@ -161,51 +164,7 @@ def create_quiz_container(quiz_title: str, due_date: str, student_data: list, fi
                         spacing="2", align="center"
                     )
                 ),
-                spacing="2",
-                align_items="center"
-            ),
-
-            # Submit Grades button at bottom right
-            rx.hstack(
-                rx.spacer(),
-                rx.alert_dialog.root(
-                    rx.alert_dialog.trigger(
-                        rx.button(
-                            "Submit Grades",
-                            bg="#6EA9C5",
-                            color="white",
-                            border_radius="8px",
-                            cursor="pointer"
-                        ),
-                    ),
-                    rx.alert_dialog.content(
-                        rx.alert_dialog.title("Submit Grades"),
-                        rx.alert_dialog.description(
-                            "Are you sure you want to submit the grades?"
-                        ),
-                        rx.flex(
-                            rx.alert_dialog.cancel(
-                                rx.button(
-                                    "Cancel",
-                                    variant="soft",
-                                    color_scheme="gray",
-                                ),
-                            ),
-                            rx.alert_dialog.action(
-                                rx.button(
-                                    "Submit",
-                                    color_scheme="blue",
-                                    on_click=State.submit_grades,
-                                ),
-                            ),
-                            spacing="3",
-                            justify="end",
-                        ),
-                    ),
-                ),
-                width="100%",
-                padding="10px",
-                margin_top="1rem",
+                spacing="2", align_items="center"
             ),
         ),
         height="450px",
@@ -216,13 +175,16 @@ def create_quiz_container(quiz_title: str, due_date: str, student_data: list, fi
         overflow_y="scroll",
     )
 
+
 def all_quizzes() -> rx.Component:
+    """Creates the main quizzes page layout with scrollable containers."""
     return rx.box(
         rx.vstack(
             rx.text("Quizzes", font_size="35px", font_weight="bold", color="#598da2", text_align="center"),
             
-            # Action buttons
+            # Buttons on a new line
             rx.hstack(
+                # Add Quiz Dialog
                 rx.alert_dialog.root(
                     rx.alert_dialog.trigger(
                         rx.button("Add Quiz", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
@@ -234,7 +196,7 @@ def all_quizzes() -> rx.Component:
                             rx.flex(
                                 rx.input(
                                     placeholder="Quiz Name",
-                                    name="quiz_name",
+                                    name="quiz_name", 
                                     required=True
                                 ),
                                 rx.input(
@@ -275,6 +237,7 @@ def all_quizzes() -> rx.Component:
                     ),
                 ),
                 
+                # Delete Quiz Dialog
                 rx.alert_dialog.root(
                     rx.alert_dialog.trigger(
                         rx.button("Delete Quiz", bg="#6EA9C5", color="white", border_radius="8px", cursor="pointer"),
@@ -293,7 +256,7 @@ def all_quizzes() -> rx.Component:
                                     rx.button(
                                         "Cancel",
                                         variant="soft",
-                                        color_scheme="gray",
+                                        color_scheme="gray", 
                                     ),
                                 ),
                                 rx.alert_dialog.action(
@@ -312,33 +275,20 @@ def all_quizzes() -> rx.Component:
                     ),
                 ),
                 spacing="4",
-                justify="center",
+                justify="center", 
                 width="100%",
                 margin_top="1rem"
             ),
 
             # Quizzes list
             rx.vstack(
-                rx.foreach(
-                    State.quizzes,
-                    lambda quiz: create_quiz_container(
-                        quiz["quiz_name"],
-                        quiz["due_date"],
-                        quiz["students"],
-                        quiz.get("file_name", "No file uploaded")
-                    ),
-                ),
-                spacing="6",
-                align="center"
+                rx.foreach(State.quizzes, lambda quiz: create_quiz_container(quiz["quiz_name"], quiz["due_date"], quiz["students"])),
+                spacing="4",
+                align_items="center",
             ),
-            spacing="6",
-            align_items="center"
         ),
-        width="100%",
-        min_height="100vh",
-        display="flex",
-        justify_content="center",
-        align_items="center",
-        margin_left="4rem",
-        padding_top="7rem",
+        height="100vh", 
+        overflow_y="scroll", 
+        padding="20px", 
+        background_color="#e0f7fa", 
     )
