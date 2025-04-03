@@ -67,13 +67,10 @@ def create_container(title:str,lecture) -> rx.Component:
         padding="20px",
         margin_top="10px",
         height="27rem"
-    )
+
 
 def materials() -> rx.Component:
-    """Creates the main page layout with two scrollable containers: one for textbooks and one for notes."""
-    textbooks = ["Textbook 1", "Textbook 2", "Textbook 3", "Textbook 4", "Textbook 5"]  # Example list of textbooks
-    notes = ["Lecture 1 Notes", "Lecture 2 Notes", "Lecture 3 Notes", "Lecture 4 Notes", "Lecture 5 Notes"]  # Example list of notes
-    
+    """Dynamic materials page with containers, file upload, and delete functionality."""
     return rx.box(
         rx.vstack(
             rx.text("Materials", font_size="28px", font_weight="bold", color="#598da2"),
@@ -121,14 +118,15 @@ def materials() -> rx.Component:
                     rx.box() 
                 ),
             ),
-            spacing="6",  # Space between the title and materials content
-            align_items="center",  # Align everything in the center
+            
+            spacing="6",
+            align_items="center",
         ),
         width="100%",
         min_height="100vh",
         display="flex",
-        justify_content="center",  # Center everything horizontally
-        align_items="center",  # Center everything vertically
+        justify_content="center",
+        align_items="center",
         padding_top="7rem",
         margin_left="7rem",
         on_mount=MaterialState.on_load

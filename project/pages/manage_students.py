@@ -126,7 +126,7 @@ def manage_students() -> rx.Component:
                     rx.button(
                         "Remove Students",
                         padding="15px",
-                        background_color="#A25B5B",
+                        background_color="#598da2",
                         color="white",
                         width="200px",
                         height="50px",
