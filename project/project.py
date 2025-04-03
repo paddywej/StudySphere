@@ -31,6 +31,7 @@ from project.pages.all_assignments import all_assignments
 from project.pages.all_assignments import all_assignments
 from project.pages.all_quizzes import all_quizzes
 from project.pages.all_exams import all_exams
+from project.pages.professorgrading import professor_grades
 
 style = {
     "::placeholder": {
@@ -331,6 +332,19 @@ def professor_subjects_page() -> rx.Component:
         bg="white"
     )
 
+def professor_grading_page() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(),
+            navmenu(),
+            professor_grades(),
+        ),
+        justify="center",
+        min_height="100vh", 
+        margin_top="10px", 
+        bg="white"
+    )
+
 # def grading_page() -> rx.Component:
 #     return rx.container(
 #         rx.vstack(
@@ -373,3 +387,4 @@ app.add_page(professor_subjects_page, route="/professor_subjects")
 app.add_page(all_assignments_page, route="/all_assignments")
 app.add_page(all_quizzes_page, route="/all_quizzes")
 app.add_page(all_exams_page, route="/all_exams")
+app.add_page(professor_grading_page, route="/professor_grades")
