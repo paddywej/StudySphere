@@ -24,9 +24,9 @@ from project.pages.examdetailpage import exam_details
 from project.pages.gradepage import grades
 from project.pages.manage_students import manage_students
 from project.pages.landingpage import landing
-from project.pages.submitted_works import manage_submitted_works
+# from project.pages.submitted_works import manage_submitted_works
 from project.pages.professor_subjects import professor_subjects
-from project.pages.gradingpage import grading
+# from project.pages.gradingpage import grading
 from project.pages.all_assignments import all_assignments
 from project.pages.all_assignments import all_assignments
 from project.pages.all_quizzes import all_quizzes
@@ -306,18 +306,18 @@ def landing_page() -> rx.Component:
         bg="white"
     )
 
-def manage_submitted_works_page() -> rx.Component:
-    return rx.container(
-        rx.vstack(
-            navbar(),
-            navmenu(),
-            manage_submitted_works(),
-        ),
-        justify="center",
-        min_height="100vh", 
-        margin_top="10px", 
-        bg="white"
-    )
+# def manage_submitted_works_page() -> rx.Component:
+#     return rx.container(
+#         rx.vstack(
+#             navbar(),
+#             navmenu(),
+#             manage_submitted_works(),
+#         ),
+#         justify="center",
+#         min_height="100vh", 
+#         margin_top="10px", 
+#         bg="white"
+#     )
 
 def professor_subjects_page() -> rx.Component:
     return rx.container(
@@ -331,18 +331,18 @@ def professor_subjects_page() -> rx.Component:
         bg="white"
     )
 
-def grading_page() -> rx.Component:
-    return rx.container(
-        rx.vstack(
-            navbar(),
-            navmenu(),
-            grading(),
-        ),
-        justify="center",
-        min_height="100vh", 
-        margin_top="10px", 
-        bg="white"
-    )
+# def grading_page() -> rx.Component:
+#     return rx.container(
+#         rx.vstack(
+#             navbar(),
+#             navmenu(),
+#             grading(),
+#         ),
+#         justify="center",
+#         min_height="100vh", 
+#         margin_top="10px", 
+#         bg="white"
+#     )
 
 app = rx.App(style=style)
 
@@ -367,9 +367,9 @@ app.add_page(exam_detail_page, route="/exam_details/[exam_id]")
 app.add_page(grade_page, route="/grades")
 app.add_page(manage_students_page, route="/manage_students")
 app.add_page(landing_page, route="/landingpage")
-app.add_page(manage_submitted_works_page, route="/manage_submitted_works")
+# app.add_page(manage_submitted_works_page, route="/manage_submitted_works")
 app.add_page(professor_subjects_page, route="/professor_subjects")
-app.add_page(grading_page, route="/grading")
+# app.add_page(grading_page, route="/grading")
 app.add_page(all_assignments_page, route="/all_assignments")
 app.add_page(all_quizzes_page, route="/all_quizzes")
 app.add_page(all_exams_page, route="/all_exams")

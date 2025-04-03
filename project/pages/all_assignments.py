@@ -35,11 +35,17 @@ class State(rx.State):
     assignments: list[dict[str, list[dict[str, str]]]] = fetch_assignments_data()
 
     def add_assignment(self, form_data: dict):
-        self.assignments.append(form_data)
+    # Ensure the assignments list is updated properly to trigger UI refresh
+        self.assignments = self.assignments + [{
+            "assignment_name": form_data["assignment_name"],
+            "due_date": form_data["due_date"],
+            "students": []  # You may need to handle file uploads properly here
+        }]
         return rx.toast.info(
             f"Assignment {form_data['assignment_name']} has been added.",
             position="bottom-right",
         )
+
 
     def delete_assignment(self):
         # Filter out the assignment with matching name and update state
