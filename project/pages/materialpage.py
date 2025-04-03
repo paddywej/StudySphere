@@ -67,7 +67,7 @@ def create_container(title:str,lecture) -> rx.Component:
         padding="20px",
         margin_top="10px",
         height="27rem"
-
+    )
 
 def materials() -> rx.Component:
     """Dynamic materials page with containers, file upload, and delete functionality."""
