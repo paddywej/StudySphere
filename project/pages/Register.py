@@ -12,17 +12,17 @@ class FormState(rx.State):
             self.message = ""
 
         # Simulate success or failure based on input (for front-end testing)
-        if form_data.get("user_id") and form_data.get("password"):
-            yield rx.toast.info("Registration successful!", position="top-center")
-        else:
-            self.message = "Registration failed. Please fill in all fields."
+        # if form_data.get("user_id") and form_data.get("password"):
+        #     yield rx.toast.info("Registration successful!", position="top-center")
+        # else:
+        #     self.message = "Registration failed. Please fill in all fields."
 
         # Uncomment when connecting to backend:
-        # response = requests.post("http://127.0.0.1:8000/register", json=form_data)
-        # if response.status_code == 200:
-        #     return rx.toast.info("Registration successful!", position="top-center")
-        # else:
-        #     self.message = response.json().get("detail", "Registration failed.")
+        response = requests.post("http://127.0.0.1:8000/register", json=form_data)
+        if response.status_code == 200:
+            return rx.toast.info("Registration successful!", position="top-center")
+        else:
+            self.message = response.json().get("detail", "Registration failed.")
 
 
 def register() -> rx.Component:

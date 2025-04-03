@@ -162,6 +162,7 @@ class Subject(SubjectBase):
 
 class SubjectResponse(SubjectBase):
     subject_id: str
+    student_list: List[int]
 
     class Config:
         from_attributes = True

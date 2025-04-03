@@ -1,11 +1,11 @@
 import reflex as rx
-# from project.pages.login import FormState
+from project.pages.login import FormState
 
 def navbar_link(text: str, url: str) -> rx.Component:
     return rx.link(
         rx.text(text, size="2", color="white"),
         href=url,
-        cursor="pointer",  # Added cursor pointer
+        cursor="pointer", 
     )
 
 def navbar() -> rx.Component:
@@ -14,13 +14,27 @@ def navbar() -> rx.Component:
         rx.desktop_only(
             rx.hstack(
                 rx.hstack(
-                    rx.image(src="/hat_icon.png", width="50px", height="auto", on_click=rx.redirect("/home"), cursor="pointer"),  # Added cursor pointer
-                    # rx.icon("menu", size=30), 
-                    rx.heading(
-                        "StudySphere", size="7", weight="bold", cursor="pointer"  # Added cursor pointer
+                    rx.cond(
+                        FormState.role == "Professor",
+                        rx.hstack(
+                            rx.image(src="/hat_icon.png", width="50px", height="auto", on_click=rx.redirect("/professor_subjects"), cursor="pointer"),  
+                            # rx.icon("menu", size=30), 
+                            rx.heading(
+                                "StudySphere", size="7", weight="bold", cursor="pointer"  
+                            ),
+                            align_items="center",
+                            on_click=rx.redirect("/professor_subjects"),
+                        ),
+                        rx.hstack(
+                            rx.image(src="/hat_icon.png", width="50px", height="auto", on_click=rx.redirect("/subject"), cursor="pointer"),  
+                            # rx.icon("menu", size=30), 
+                            rx.heading(
+                                "StudySphere", size="7", weight="bold", cursor="pointer"  
+                            ),
+                            align_items="center",
+                            on_click=rx.redirect("/subject"),
+                        ),
                     ),
-                    align_items="center",
-                    on_click=rx.redirect("/home"),
                 ),
                 rx.hstack(
                     rx.button(
@@ -29,7 +43,7 @@ def navbar() -> rx.Component:
                         bg="transparent",
                         border="none",  
                         padding="2", 
-                        cursor="pointer",  # Added cursor pointer
+                        cursor="pointer",
                     ),
                     rx.menu.root(
                         rx.menu.trigger(
@@ -37,26 +51,26 @@ def navbar() -> rx.Component:
                                 rx.icon("user"),
                                 size="2",
                                 radius="full",
-                                cursor="pointer" # Added cursor pointer
+                                cursor="pointer" 
                             )
                         ),
                         rx.menu.content(
-                            rx.menu.item("Settings", cursor="pointer"),  # Added cursor pointer
+                            rx.menu.item("Settings", cursor="pointer"),  
                             rx.menu.separator(),
-                            rx.menu.item("Log out", on_click=rx.redirect("/login"), cursor="pointer"),  # Added cursor pointer
+                            rx.menu.item("Log out", on_click=rx.redirect("/login"), cursor="pointer"),  
                         ),
                         justify="end",
                     ),
                     # User text with dropdown menu
                     rx.menu.root(
                         rx.menu.trigger(
-                            rx.text("User", font_size="1.2em", color="white", cursor="pointer"),
-                            # rx.text(FormState.user_id, font_size="1.2em", color="white", cursor="pointer"),
+                            # rx.text("User", font_size="1.2em", color="white", cursor="pointer"),
+                            rx.text(FormState.user_id, font_size="1.2em", color="white", cursor="pointer"),
                         ),
                         rx.menu.content(
-                            rx.menu.item("Settings", cursor="pointer"),  # Added cursor pointer
+                            rx.menu.item("Settings", cursor="pointer"), 
                             rx.menu.separator(),
-                            rx.menu.item("Log out", on_click=rx.redirect("/login"), cursor="pointer"),  # Added cursor pointer
+                            rx.menu.item("Log out", on_click=rx.redirect("/login"), cursor="pointer"),  
                         ),
                         justify="end",
                     ),
@@ -71,10 +85,10 @@ def navbar() -> rx.Component:
         rx.mobile_and_tablet(
             rx.hstack(
                 rx.hstack(
-                    rx.image(src="/hat_icon.png", width="60px", height="auto", cursor="pointer"),  # Added cursor pointer
+                    rx.image(src="/hat_icon.png", width="60px", height="auto", cursor="pointer"), 
                     # rx.icon("menu", size=25), 
                     rx.heading(
-                        "StudySphere", size="6", weight="bold", cursor="pointer"  # Added cursor pointer
+                        "StudySphere", size="6", weight="bold", cursor="pointer" 
                     ),
                     align_items="center",
                 ),
@@ -85,7 +99,7 @@ def navbar() -> rx.Component:
                         bg="transparent", 
                         border="none", 
                         padding="2",
-                        cursor="pointer",  # Added cursor pointer
+                        cursor="pointer", 
                     ),
                     rx.menu.root(
                         rx.menu.trigger(

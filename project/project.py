@@ -3,7 +3,6 @@ from rxconfig import config
 from project.components.NavBar import navbar
 from project.components.LandingNavBar import landingnavbar
 from project.components.SearchBar import search_bar
-from project.pages.homepage import menu_year
 from project.pages.register import register
 from project.pages.login import login
 from project.pages.subjectpage import Subjects
@@ -12,9 +11,9 @@ from project.pages.year2 import Year2
 from project.pages.year3 import Year3
 from project.pages.year4 import Year4
 from project.pages.lecturepage import lectures
+from project.pages.lecturemenu import Lecture_menu
 from project.pages.materialpage import materials
 from project.components.NavMenu import navmenu
-from project.components.HomeNavMenu import homenavmenu
 from project.pages.assignments_page import assignments
 from project.pages.assignment_details import assignment_details
 from project.pages.quizpage import quiz
@@ -31,26 +30,14 @@ from project.pages.all_assignments import all_assignments
 from project.pages.all_assignments import all_assignments
 from project.pages.all_quizzes import all_quizzes
 from project.pages.all_exams import all_exams
+from project.pages.upload_lecture import Upload_lecture
+from project.pages.upload_material import Upload_material
 
 style = {
     "::placeholder": {
         "color": "#9AA7B2",
     },
 }
-
-def HomePage() -> rx.Component:
-    return rx.container(
-        rx.vstack(
-            navbar(), 
-            homenavmenu(),
-            search_bar(),
-            menu_year(),
-        ),
-        justify="center",
-        min_height="100vh", 
-        margin_top="70px", 
-        bg="white"
-    )
 
 def register_page() -> rx.Component:
     return rx.container(
@@ -69,6 +56,19 @@ def lecture_page()-> rx.Component:
             navbar(),
             navmenu(),
             lectures(subject_title),
+        ),
+        justify="center",
+        min_height="100vh", 
+        margin_top="10px", 
+        bg="white"
+    )
+
+def lecture_menu()-> rx.Component:
+    return rx.container(
+        rx.vstack(
+            navbar(),
+            navmenu(),
+            Lecture_menu(),
         ),
         justify="center",
         min_height="100vh", 
@@ -239,6 +239,24 @@ def subject_page() -> rx.Component:
         
     )
 
+def upload_lecture() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            Upload_lecture()
+        ),
+        bg="white"
+        
+    )
+
+def upload_material() -> rx.Component:
+    return rx.container(
+        rx.vstack(
+            Upload_material()
+        ),
+        bg="white"
+        
+    )
+
 def year1() -> rx.Component:
     return rx.container(
         rx.vstack(
@@ -350,7 +368,6 @@ app = rx.App(style=style)
 app.add_page(index, route="/")
 app.add_page(register_page, route="/register")
 app.add_page(login_page, route="/login")
-app.add_page(HomePage, route="/home")
 app.add_page(subject_page, route="/subject")
 app.add_page(year1, route="/year1")
 app.add_page(year2, route="/year2")
@@ -359,6 +376,7 @@ app.add_page(year4, route="/year4")
 app.add_page(assignments_page, route="/assignments")
 app.add_page(assignment_details_page, route="/assignment_details/[assignment_id]")
 app.add_page(lecture_page, route="/lectures")
+app.add_page(lecture_menu, route="/lecture_menu")
 app.add_page(material_page, route="/materials")
 app.add_page(quiz_page, route="/quiz")
 app.add_page(quiz_detail_page, route="/quiz_details/[quiz_id]")
@@ -373,3 +391,5 @@ app.add_page(grading_page, route="/grading")
 app.add_page(all_assignments_page, route="/all_assignments")
 app.add_page(all_quizzes_page, route="/all_quizzes")
 app.add_page(all_exams_page, route="/all_exams")
+app.add_page(upload_lecture, route="/upload_lecture")
+app.add_page(upload_material, route="/upload_material")

@@ -1,8 +1,9 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.dialects.postgresql import ARRAY 
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 from .database import Base
 import datetime
+
 
 # Student Table 
 class Student(Base):
@@ -30,19 +31,23 @@ class Professor(Base):
     email = Column(String, unique=True, nullable=False)  # Email added
     password = Column(String, nullable=True)  # before sign up null
 
-# Lecture Table
+# # Lecture Table
 class Lecture(Base):
-    __tablename__ = "lectures"
+    __tablename__ = 'lectures'
 
-    lecture_id = Column(String, primary_key=True, index=True)  # Changed to String
-    subject_id = Column(String, ForeignKey("subjects.subject_id"), nullable=False)  # Foreign key to Subject
+    lecture_id = Column(String, primary_key=True)
+    subject_id = Column(String, ForeignKey("subjects.subject_id"), nullable=False)
     name = Column(String, nullable=False)
-    date = Column(String, nullable=False)
+    date = Column(DateTime, nullable=False)
     time = Column(String, nullable=False)
-    file_path = Column(String, nullable=False)  # Path to the submitted file
+    file_path = Column(String, nullable=False)
 
-    # Establish the relationship with the Subject table
     subject = relationship("Subject", back_populates="lectures")
+
+    @validates('lecture_id')
+    def validate_lecture_id(self, key, value):
+        """Ensure the lecture_id is a valid UUID format."""
+        return value
 
 # Material Table
 class Material(Base):
@@ -51,6 +56,7 @@ class Material(Base):
     material_id = Column(String, primary_key=True, index=True)  # Changed to String
     subject_id = Column(String, ForeignKey("subjects.subject_id"), nullable=False)  # Foreign key to Subject
     name = Column(String, nullable=False)
+    type = Column(String, nullable=False)
     file_path = Column(String, nullable=False)  # Path to the material file
     
     # Relationship with the Subject table

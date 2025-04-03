@@ -1,4 +1,5 @@
 import reflex as rx
+from project.pages.login import FormState
 
 def navmenu_link(text: str, url: str, margin_top: str = "") -> rx.Component:
     return rx.box(
@@ -23,14 +24,23 @@ class NavigationState(rx.State):
 def navmenu() -> rx.Component:
     return rx.box(
         rx.vstack(            
-            navmenu_link("Lectures", "/lectures"),
-            navmenu_link("Assignments", "/assignments"),
+            navmenu_link("Lectures", "/lecture_menu"),
+            rx.cond(
+                FormState.role == "Professor",  # Check if the role is "Professor"
+                navmenu_link("Assignments", "/all_assignments"),  # Show this if the role is Professor
+                navmenu_link("Assignments", "/assignments"),
+            ),
+            # navmenu_link("Assignments", "/assignments"),
             navmenu_link("Materials", "/materials"),
             navmenu_link("Quiz", "/quiz"),
             navmenu_link("Exam", "/exam"),
             navmenu_link("Grades", "/grades"),
-            navmenu_link("Manage Students", "/manage_students"),
-            
+            # navmenu_link("Manage Students", "/manage_students"),
+            rx.cond(
+                FormState.role == "Professor",  # Check if the role is "Professor"
+                navmenu_link("Manage Students", "/manage_students"),  # Show this if the role is Professor
+                rx.box()  # Show an empty box (nothing) if not a Professor
+            ),
             rx.button(
                 "Back",
                 on_click=NavigationState.go_back,
