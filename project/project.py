@@ -28,10 +28,10 @@ from project.pages.landingpage import landing
 from project.pages.professor_subjects import professor_subjects
 # from project.pages.gradingpage import grading
 from project.pages.all_assignments import all_assignments
-from project.pages.all_assignments import all_assignments
 from project.pages.all_quizzes import all_quizzes
 from project.pages.all_exams import all_exams
 from project.pages.professorgrading import professor_grades
+
 
 style = {
     "::placeholder": {

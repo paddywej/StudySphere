@@ -1,6 +1,46 @@
 import reflex as rx
 # from project.pages.login import FormState
 
+class NotificationState(rx.State):
+    notifications: list[dict] = [
+        {"title": "New Assignment", "content": "You have a new assignment"},
+        {"title": "New Quiz", "content": "You have a new quiz"},
+        {"title": "New Exam", "content": "You have a new exam"}
+    ]
+
+def notification_dialog():
+    return rx.dialog.root(
+        rx.dialog.trigger(
+            rx.button(
+                rx.icon("bell", size=30),
+                bg="transparent",
+                border="none",
+                padding="2",
+                cursor="pointer",
+            )
+        ),
+        rx.dialog.content(
+            rx.dialog.title("Notifications"),
+            rx.dialog.description(
+                rx.vstack(
+                    rx.foreach(
+                        NotificationState.notifications,
+                        lambda notification: rx.box(
+                            rx.heading(notification["title"], size="3"),
+                            rx.text(notification["content"]),
+                            padding="4",
+                            border_bottom="1px solid #eee"
+                        )
+                    )
+                )
+            ),
+            rx.dialog.close(
+                rx.button("Close")
+            ),
+            max_width="450px",
+        ),
+    )
+
 def navbar_link(text: str, url: str) -> rx.Component:
     return rx.link(
         rx.text(text, size="2", color="white"),
@@ -23,14 +63,7 @@ def navbar() -> rx.Component:
                     on_click=rx.redirect("/home"),
                 ),
                 rx.hstack(
-                    rx.button(
-                        rx.icon("bell", size=30),  
-                        # on_click=lambda: print("Bell icon clicked"), 
-                        bg="transparent",
-                        border="none",  
-                        padding="2", 
-                        cursor="pointer",  # Added cursor pointer
-                    ),
+                    notification_dialog(),
                     rx.menu.root(
                         rx.menu.trigger(
                             rx.icon_button(
