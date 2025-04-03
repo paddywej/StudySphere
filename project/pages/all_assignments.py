@@ -60,26 +60,28 @@ class State(rx.State):
 
 
 
-def create_assignment_container(assignment_title: str, due_date: str, student_data: list) -> rx.Component:
-    """Creates a scrollable container with student assignment data."""
+def create_assignment_container(assignment_title: str, due_date: str, student_data: list, file_name: str) -> rx.Component:
     return rx.box(
         rx.text(f"{assignment_title} - {due_date}", font_size="24px", font_weight="bold", color="black", text_align="center", margin_bottom="1rem"),
+
+        # Professor's file section
+        rx.box(
+            rx.text(f"Professor's File: {file_name}", font_size="16px", font_style="italic", color="gray"),
+            padding="10px",
+            background_color="#f0f0f0",
+            border_radius="6px",
+            margin_bottom="1rem",
+            width="100%",
+            text_align="center",
+        ),
+
         rx.vstack(
             rx.foreach(
                 student_data,
                 lambda student: rx.hstack(
-                    rx.box(
-                        rx.text(student["name"], font_size="16px"),
-                        width="33%", padding="10px", background_color="#effaff", color="black", border_radius="4px", height="50px", display="flex", align_items="center", justify_content="center"
-                    ),
-                    rx.box(
-                        rx.text(student["file"], font_size="16px"),
-                        width="33%", padding="10px", background_color="#effaff", color="black", border_radius="4px", height="50px", display="flex", align_items="center", justify_content="center"
-                    ),
-                    rx.box(
-                        rx.input(placeholder="Enter score", width="100%", bg="white", border_radius="4px", color="black"),
-                        width="33%", padding="10px", background_color="#effaff", border_radius="4px", height="50px", display="flex", align_items="center", justify_content="center"
-                    ),
+                    rx.box(rx.text(student["name"], font_size="16px"), width="33%", padding="10px", background_color="#effaff", color="black", border_radius="4px", height="50px", display="flex", align_items="center", justify_content="center"),
+                    rx.box(rx.text(student["file"], font_size="16px"), width="33%", padding="10px", background_color="#effaff", color="black", border_radius="4px", height="50px", display="flex", align_items="center", justify_content="center"),
+                    rx.box(rx.input(placeholder="Enter score", width="100%", bg="white", border_radius="4px", color="black"), width="33%", padding="10px", background_color="#effaff", border_radius="4px", height="50px", display="flex", align_items="center", justify_content="center"),
                     spacing="2", align="center"
                 )
             ),
@@ -92,6 +94,7 @@ def create_assignment_container(assignment_title: str, due_date: str, student_da
         padding="20px",
         overflow_y="scroll",
     )
+
 
 
 def all_assignments() -> rx.Component:
@@ -202,13 +205,16 @@ def all_assignments() -> rx.Component:
             # Assignments list - Use rx.foreach to dynamically render the assignments
             rx.vstack(
                 rx.foreach(
-                    State.assignments,  # Dynamically render the assignments from state
+                    State.assignments,
                     lambda assignment: create_assignment_container(
                         assignment["assignment_name"],
                         assignment["due_date"],
-                        assignment["students"]
-                    )
+                        assignment["students"],
+                        assignment["file_name"]  # No need for `.get()` anymore
+                    ),
                 ),
+
+
                 spacing="6",
                 align="center"
             ),
