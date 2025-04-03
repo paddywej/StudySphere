@@ -41,6 +41,24 @@ class MaterialsState(rx.State):
         elif file_name in self.notes:
             self.notes.remove(file_name)
 
+    async def handle_upload_confirm(self, files: list[rx.UploadFile]):
+        """Handles file upload after confirmation."""
+        if not self.selected_category:
+            rx.window_alert("Please select a category before uploading.")
+            return
+                
+        for file in files:
+            upload_data = await file.read()
+            outfile = rx.get_upload_dir() / file.filename
+            with outfile.open("wb") as file_object:
+                file_object.write(upload_data)
+            self.material_file = file.filename
+
+            if self.selected_category == "Textbook":
+                self.textbooks.append(file.filename)
+            elif self.selected_category == "Notes": 
+                self.notes.append(file.filename)
+
 def create_materials_container(title: str, items_var) -> rx.Component:
     """Creates a container for materials with clickable links and delete buttons."""
     return rx.box(
@@ -149,16 +167,19 @@ def materials() -> rx.Component:
                         max_files=1,
                         border="1px dotted rgb(107,99,246)",
                         padding="5em",
-                        on_drop=MaterialsState.handle_upload(rx.upload_files(upload_id="material_upload")),
+                        # Remove the on_drop event
                     ),
-                    
-                    # Buttons for confirmation and cancellation
                     rx.flex(
                         rx.dialog.close(
                             rx.button("Cancel", variant="soft", color_scheme="gray"),
                         ),
                         rx.dialog.close(
-                            rx.button("Confirm", type="submit"),
+                            rx.button(
+                                "Confirm",
+                                on_click=MaterialsState.handle_upload_confirm(
+                                    rx.upload_files(upload_id="material_upload")
+                                ),
+                            ),
                         ),
                         spacing="3",
                         justify="end",
