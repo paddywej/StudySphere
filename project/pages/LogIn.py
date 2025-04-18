@@ -5,11 +5,9 @@ import uuid
 import datetime
 from io import BytesIO
 import asyncio
-from typing import Dict
+from typing import Dict,List
+from project.pages.exampage import State
 
-
-#=============================================================================================================================================
-#with backend
 class FormState(rx.State):
     user_id: str = ""
     role: str = ""
@@ -43,6 +41,25 @@ class FormState(rx.State):
         """Set the selected material type."""
         self.material_type = material_type
 
+    def set_user_session(self):
+        url = f"http://localhost:8000/user_session/{self.user_id}/{self.role}"
+        response = requests.post(url)  # Change to POST, since we are creating a record
+        if response.status_code == 200:
+            print("set usersession:", self.user_id)
+        else:
+            print(f"Error usersession: {self.user_id}, Status Code: {response.status_code}")
+            print(f"Response Text: {response.text}")  # Debugging: log the response text
+
+
+    def set_subject_session(self):
+        url = f"http://localhost:8000/subject_session/{self.user_id}/{self.subject_id}"
+        response = requests.post(url)  # Change to POST, since we are creating a record
+        if response.status_code == 200:
+            print("set session subject:",self.subject_id)
+        else:
+            print("Error session subject:",self.subject_id)
+
+
     def handle_submit(self, form_data: dict):
         """Handles user login and fetches additional details based on role."""
         response = requests.post("http://127.0.0.1:8000/login", json=form_data)
@@ -52,6 +69,8 @@ class FormState(rx.State):
             self.user_id = data["user_id"]
             self.role = data["role"]
             print(self.user_id)
+
+            self.set_user_session()
 
             yield rx.toast.info("Log In Successful!", position="top-center")
 
@@ -102,10 +121,6 @@ class FormState(rx.State):
             self.subjects_taught_id = response.json()  # Assuming it's a list of subject IDs
             print("Subjects taught:", self.subjects_taught_id)  # Debugging print
             self.get_subjects_name()
-
-            # for subject_id in self.subjects_taught:
-            #     self.fetch_subject_details(subject_id)
-
         else:
             print("Failed to fetch subjects:", response.status_code, response.text)
 
@@ -168,8 +183,6 @@ class FormState(rx.State):
             self.subject_id = ""
 
     def get_subjects_name(self):
-
-        # Clear existing lists
         self.subjects_taught_name=[]
 
         """Fetch subject name for each subject_id and store them in subjects_taught_name."""
@@ -189,10 +202,12 @@ class FormState(rx.State):
     # Ensure set_subject is also async
     async def set_subject(self, subject_name: str):
         self.subject_name = subject_name
+        await self.get_subjects_id(self.subject_name)
+        self.set_subject_session()
         
         # Check if user is a professor
         if self.role == "Professor":  
-            await self.get_subjects_id(self.subject_name)  # Fetch subject ID directly
+              # Fetch subject ID directly
             await self.fetch_lectures()
             yield rx.redirect("/lecture_menu")  # Redirect immediately
         else:
@@ -201,7 +216,6 @@ class FormState(rx.State):
             response = await asyncio.to_thread(requests.get, url)  # Send the request in a separate thread
             
             if response.status_code == 200 and response.json().get("enrolled", False):
-                await self.get_subjects_id(self.subject_name)  # Fetch subject ID
                 await self.fetch_lectures()
                 yield rx.redirect("/lecture_menu")
             else:
@@ -318,7 +332,36 @@ class FormState(rx.State):
         else:
             print(f"Failed to delete: {material_name} - {response.status_code}")
 
+    async def add_subject(self, form_data: dict):
+        new_subjects = [id.strip() for id in form_data.get("subject_ids", "").split(",") if id.strip()]
+        
+        for subject in new_subjects:
+            if subject not in self.subjects_taught_id:
+                url = f"http://localhost:8000/add_subject/{subject}/{self.user_id}"
+                response = await asyncio.to_thread(requests.put, url)  # POST to the API
 
+                if response.status_code == 200:
+                    self.fetch_professor_subjects()  # Re-fetch student list to reflect changes
+                    yield rx.toast.success(f"Added subject: {student}", position="top-center")
+                else:
+                    print(f"Error adding subject {subject}: {response.text}")
+            else:
+                # Assuming you want to show an error toast if student is already in list
+                yield rx.toast.error(f"Subject {subject} already exists.", position="top-center")
+
+    async def remove_subject(self, subject:str):
+            await self.get_subjects_id(subject)
+            if self.subject_id in self.subjects_taught_id:
+                url = f"http://localhost:8000/remove_subject/{self.subject_id}/{self.user_id}"
+                response = await asyncio.to_thread(requests.put, url)
+
+                if response.status_code == 200:
+                    self.fetch_professor_subjects()
+                    yield rx.toast.success(f"Removed subject: {subject}", position="top-center")
+                else:
+                    print(f"Error removing subject {subject}: {response.text}")
+            else:
+                yield rx.toast.error(f"Subject {subject} does not exist in your list.", position="top-center")
 
 #===================================
 
@@ -468,10 +511,10 @@ def login() -> rx.Component:
                         align_items="center",
                         margin_left="7.5rem",
                     ),
-                    rx.hstack(
-                        rx.link("Forgot password?", href="/forgot-password", color="white", text_decoration="underline"),
-                        margin_left="6rem"
-                    ), 
+                    # rx.hstack(
+                    #     rx.link("Forgot password?", href="/forgot-password", color="white", text_decoration="underline"),
+                    #     margin_left="6rem"
+                    # ), 
                     justify="center",
                 ),
                 on_submit=FormState.handle_submit,  # Calls backend to check credentials

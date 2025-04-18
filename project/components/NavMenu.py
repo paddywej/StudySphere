@@ -30,12 +30,23 @@ def navmenu() -> rx.Component:
                 navmenu_link("Assignments", "/all_assignments"),  # Show this if the role is Professor
                 navmenu_link("Assignments", "/assignments"),
             ),
-            # navmenu_link("Assignments", "/assignments"),
+
             navmenu_link("Materials", "/materials"),
-            navmenu_link("Quiz", "/quiz"),
-            navmenu_link("Exam", "/exam"),
-            navmenu_link("Grades", "/grades"),
-            # navmenu_link("Manage Students", "/manage_students"),
+            rx.cond(
+                FormState.role == "Student",  # Check if the role is "Professor"
+                navmenu_link("Quiz", "/quiz"),
+                navmenu_link("Quiz", "/all_quizzes"),
+            ),
+            rx.cond(
+                FormState.role == "Student",  # Check if the role is "Professor"
+                navmenu_link("Exam", "/exam"),
+                navmenu_link("Exam", "/all_exams"),
+            ),
+            # rx.cond(
+            #     FormState.role == "Professor",
+            #     navmenu_link("Grades", "/professor_grades"),
+            #     navmenu_link("Grades", "/grades"),
+            # ),
             rx.cond(
                 FormState.role == "Professor",  # Check if the role is "Professor"
                 navmenu_link("Manage Students", "/manage_students"),  # Show this if the role is Professor

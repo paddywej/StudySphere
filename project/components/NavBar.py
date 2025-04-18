@@ -99,7 +99,7 @@ def navbar() -> rx.Component:
                     ),
                 ),
                 rx.hstack(
-                    notification_dialog(),
+                    # notification_dialog(),
                     rx.menu.root(
                         rx.menu.trigger(
                             rx.icon_button(
@@ -110,8 +110,8 @@ def navbar() -> rx.Component:
                             )
                         ),
                         rx.menu.content(
-                            rx.menu.item("Settings", cursor="pointer"),  
-                            rx.menu.separator(),
+                            # rx.menu.item("Settings", cursor="pointer"),  
+                            # rx.menu.separator(),
                             rx.menu.item("Log out", on_click=rx.redirect("/login"), cursor="pointer"),  
                         ),
                         justify="end",
@@ -166,7 +166,7 @@ def navbar() -> rx.Component:
                             )
                         ),
                         rx.menu.content(
-                            rx.menu.item("Settings", cursor="pointer"),  # Added cursor pointer
+                            # rx.menu.item("Settings", cursor="pointer"),  # Added cursor pointer
                             rx.menu.separator(),
                             rx.menu.item("Log out", cursor="pointer"),  # Added cursor pointer
                         ),
@@ -179,7 +179,7 @@ def navbar() -> rx.Component:
                             # rx.text(FormState.user_id, font_size="1.2em", color="white", cursor="pointer"),
                         ),
                         rx.menu.content(
-                            rx.menu.item("Settings", cursor="pointer"),  # Added cursor pointer
+                            # rx.menu.item("Settings", cursor="pointer"),  # Added cursor pointer
                             rx.menu.separator(),
                             rx.menu.item("Log out", cursor="pointer"),  # Added cursor pointer
                         ),

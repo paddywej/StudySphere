@@ -2,27 +2,6 @@ import reflex as rx
 import requests
 from project.pages.login import FormState
 
-class ProfState(rx.State):
-    students: list[str] = ["66011217 Josh", "66011213 David", "66011217 Olivia"] 
-
-    @rx.event
-    def add_subject(self, form_data: dict):
-        new_students = [id.strip() for id in form_data.get("student_ids", "").split(",") if id.strip()]
-        
-        added = []
-        already_exists = []
-        for student in new_students:
-            if student not in self.students:
-                self.students.append(student)
-                added.append(student)
-            else:
-                already_exists.append(student)
-
-        if added:
-            return rx.toast.info(f"Added Subject: {', '.join(added)}", position="bottom-right")
-        if already_exists:
-            return rx.toast.warning(f"Already exists: {', '.join(already_exists)}", position="bottom-right")
-
 def subject_item(subject) -> rx.Component:
     """Creates a styled button for each subject with edit and delete options."""
     return rx.box(
@@ -34,9 +13,11 @@ def subject_item(subject) -> rx.Component:
                 #         rx.text(sub_item[1], size="3", weight="bold"),
                 #     ),
                 # ),
+                on_click=FormState.set_subject(subject),
                 spacing="1",
                 align_items="flex-start",
                 width="80%",
+                cursor="pointer",
             ),
             rx.spacer(),
             rx.hstack(
@@ -44,7 +25,7 @@ def subject_item(subject) -> rx.Component:
                     rx.icon("trash"),
                     size="1",
                     variant="ghost",
-                    # on_click=lambda: rx.window_alert(f"Delete subject: {subject["name"]}"),
+                    on_click=FormState.remove_subject(subject),
                     color="gray",
                     _hover={"color": "red.500"},
                 ),
@@ -59,7 +40,6 @@ def subject_item(subject) -> rx.Component:
         width="100%",
         shadow="md",
         _hover={"bg": "#FFEFD0"},
-        on_click=FormState.set_subject(subject),
     )
 
 def create_container(title: str, subjects: list) -> rx.Component:
@@ -82,7 +62,6 @@ def create_container(title: str, subjects: list) -> rx.Component:
                                 color="#598da2",
                                 size="2",
                                 border_radius="md",
-                                # on_click=lambda: rx.window_alert("Add new subject"),
                                 _hover={"bg": "#FFEFD0"},
                             ),
                             width="100%",
@@ -109,7 +88,7 @@ def create_container(title: str, subjects: list) -> rx.Component:
                                     direction="column",
                                     spacing="4",
                                 ),
-                                on_submit=ProfState.add_subject,
+                                on_submit=FormState.add_subject,
                                 reset_on_submit=True,
                             ),
                             max_width="450px",

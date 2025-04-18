@@ -124,3 +124,12 @@ class Submission(Base):
     # Relationship
     assessment = relationship("Assessment", back_populates="submissions")  # Link to the Assessment table
     student = relationship("Student", back_populates="submissions")  # Link to the Student table
+
+class UserSession(Base):
+    __tablename__ = "user_sessions"
+    
+    session_id = Column(String, primary_key=True, index=True)  # Unique user ID
+    user_id = Column(String, nullable=False) 
+    role = Column(String, nullable=False)  # User's role (e.g., 'admin', 'student', etc.)
+    subject_id = Column(String, nullable=True)  # Subject ID that the user is associated with
+    

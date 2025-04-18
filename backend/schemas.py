@@ -190,3 +190,24 @@ class SubmissionResponse(SubmissionBase):
 
     class Config:
         from_attributes = True
+
+class UserSessionBase(BaseModel):
+    session_id:str
+    user_id: str
+    role: str
+    subject_id: str
+
+class UserSessionCreate(SubmissionBase):
+    pass
+
+class UserSession(SubmissionBase):
+    session_id:str
+
+    class Config:
+        from_attributes = True
+
+class UserSessionCreateResponse(SubmissionBase):
+    session_id:str
+
+    class Config:
+        from_attributes = True

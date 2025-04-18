@@ -14,10 +14,13 @@ from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
 import os
 import logging
 import uuid
-from sqlalchemy import cast, Integer
+from sqlalchemy import cast, Integer,func
+from typing import Dict,List
+import shutil
+from datetime import datetime
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -383,3 +386,613 @@ async def upload_material(
         raise HTTPException(status_code=500, detail="Error saving material to database")
 
     return {"message": "Material uploaded successfully", "file_path": file_path}
+
+@app.get("/get_student_list/{subject_id}", response_model=List[str])
+async def get_student_list(subject_id: str, db: Session = Depends(get_db)):
+    # Fetch the subject based on subject_id
+    subject = db.query(Subject).filter(Subject.subject_id == subject_id).first()
+
+    if not subject:
+        raise HTTPException(status_code=404, detail="Subject not found")
+
+    # student_list is an array of student IDs in the Subject model
+    student_list = subject.student_list or []  # Use empty list if no students
+
+    return student_list
+
+@app.post("/subjects/{subject_id}/add_students/")
+async def add_students_to_subject(subject_id: str, students: list, db: Session = Depends(get_db)):
+    subject = db.query(Subject).filter(Subject.subject_id == subject_id).first()
+
+    if not subject:
+        raise HTTPException(status_code=404, detail="Subject not found")
+    
+    # Add students to the subject's student list
+    for student_id in students:
+        if student_id not in subject.student_list:
+            subject.student_list.append(student_id)
+
+    db.commit()
+
+    return {"message": "Students added successfully"}
+
+@app.post("/user_session/{user_id}/{role}")
+def user_session(user_id: str, role: str, db: Session = Depends(get_db)):
+    user_session = db.query(UserSession).filter(UserSession.session_id == "S001").first()
+
+    if not user_session:
+        raise HTTPException(status_code=404, detail="User session not found")
+
+    user_session.user_id=user_id,
+    user_session.role=role,
+    user_session.subject_id=None 
+
+    db.commit()
+    db.refresh(user_session)
+    return user_session
+
+@app.post("/subject_session/{user_id}/{subject_id}")
+def subject_session(user_id: str, subject_id: str, db: Session = Depends(get_db)):
+    # Retrieve the user session based on user_id
+    user_session = db.query(UserSession).filter(UserSession.user_id == user_id).first()
+
+    if not user_session:
+        raise HTTPException(status_code=404, detail="User session not found")
+
+    # Update the subject_id for the user session
+    user_session.subject_id = subject_id  
+
+    # Commit the transaction and refresh the session to get the latest state
+    db.commit()
+    db.refresh(user_session)  
+    return user_session
+
+@app.get("/user_session/subject")
+def subject_id_session(db: Session = Depends(get_db)):
+    user_session = db.query(UserSession).filter(UserSession.session_id == "S001").first()
+
+    if not user_session:
+        raise HTTPException(status_code=404, detail="User session not found")
+
+    return user_session.subject_id
+
+@app.get("/user_session/student")
+def student_id_session(db: Session = Depends(get_db)):
+    user_session = db.query(UserSession).filter(UserSession.session_id == "S001").first()
+
+    if not user_session:
+        raise HTTPException(status_code=404, detail="User session not found")
+
+    return user_session.user_id
+
+@app.put("/add_student/{subject_id}/{student}")
+def add_student_to_subject(subject_id: str, student: str, db: Session = Depends(get_db)):
+    # Query the subject by subject_id
+    subject = db.query(Subject).filter(Subject.subject_id == subject_id).first()
+
+    # Check if the subject exists
+    if not subject:
+        raise HTTPException(status_code=404, detail="Subject not found")
+
+    # Initialize student_list if it's None
+    if not subject.student_list:  
+        subject.student_list = []
+
+    # Rebuild the student list and append the new student
+    if student not in subject.student_list:
+        subject.student_list.append(student)
+        db.commit()  # Commit the changes to the database
+        db.refresh(subject)  # Refresh the object to get updated data from DB
+        
+        return {"message": f"Student {student} added to subject {subject_id}"}
+    else:
+        raise HTTPException(status_code=400, detail="Student already exists in subject")
+
+
+@app.put("/remove_student/{subject_id}/{student}")
+def remove_student_from_subject(subject_id: str, student: str, db: Session = Depends(get_db)):
+    subject = db.query(Subject).filter(Subject.subject_id == subject_id).first()
+
+    if not subject:
+        raise HTTPException(status_code=404, detail="Subject not found")
+
+    # Check if the student is in the list
+    if student in subject.student_list:
+        # Create a new list excluding the student
+        updated_student_list = [s for s in subject.student_list if s != student]
+        
+        # Update the subject's student list with the new list
+        subject.student_list = updated_student_list
+        
+        # Commit the changes
+        db.commit()
+        db.refresh(subject)  # Refresh to get updated data from DB
+        return {"message": f"Student {student} removed from subject {subject_id}"}
+    else:
+        raise HTTPException(status_code=400, detail="Student not found in subject")
+
+@app.put("/add_subject/{subject_id}/{user_id}")
+def add_subject(subject_id: str, user_id: str, db: Session = Depends(get_db)):
+    # Query the subject by subject_id
+    professor = db.query(Professor).filter(Professor.professor_id == user_id).first()
+
+    # Check if the subject exists
+    if not professor:
+        raise HTTPException(status_code=404, detail="Professor not found")
+
+    # Check if the student is already in the student_list
+    if subject_id in professor.subject_list:
+        raise HTTPException(status_code=400, detail="Subject already exists in subject")
+    
+    # Rebuild the student list and append the new student
+    professor.subject_list = professor.subject_list + [subject_id]
+    
+    db.commit()  # Commit the changes to the database
+    db.refresh(professor)  # Refresh the object to get updated data from DB
+    
+    return {"message": f"{student} added"}
+
+@app.put("/remove_subject/{subject_id}/{user_id}")
+def remove_subject(subject_id: str, user_id: str, db: Session = Depends(get_db)):
+    professor = db.query(Professor).filter(Professor.professor_id == user_id).first()
+
+    if not professor:
+        raise HTTPException(status_code=404, detail="Professor not found")
+
+    if not professor.subject_list:
+        raise HTTPException(status_code=400, detail="No subjects found for professor")
+
+    if subject_id in professor.subject_list:
+        professor.subject_list = [s for s in professor.subject_list if s != subject_id]
+        db.commit()
+        db.refresh(professor)
+        return {"message": f"Subject {subject_id} removed from professor {user_id}"}
+    else:
+        raise HTTPException(status_code=400, detail="Subject not found in professor's list")
+
+
+@app.post("/add_assignment")
+def create_assignment(
+    assessment_id: str = Form(...),
+    subject_id: str = Form(...),
+    name: str = Form(...),
+    due_date: str = Form(...),
+    published_date: str = Form(...),
+    status: str = Form(...),
+    assessment_type: str = Form(...),
+    file_name: str = Form(...),  # <-- Accept file name only
+    db: Session = Depends(get_db),
+):
+
+    # Convert string dates to datetime objects
+    try:
+        due_dt = datetime.strptime(due_date, "%Y-%m-%dT%H:%M:%S.%f")
+        pub_dt = datetime.strptime(published_date, "%Y-%m-%dT%H:%M:%S.%f")
+    except ValueError as e:
+        logging.error(f"Date parsing error: {e}")
+        raise HTTPException(status_code=400, detail="Invalid date format")
+
+    # Create new assessment record
+    new_assessment = Assessment(
+        assessment_id=assessment_id,
+        subject_id=subject_id,
+        name=name,
+        due_date=due_dt,
+        published_date=pub_dt,
+        status=status,
+        assessment_type=assessment_type,
+        file_path=file_name  # Save file name as a path format
+    )
+
+    try:
+        db.add(new_assessment)
+        db.commit()
+        db.refresh(new_assessment)
+        return {"message": "Assessment created successfully", "id": assessment_id}
+
+    except Exception as e:
+        logging.error(f"Database error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/add_quiz")
+def create_quiz(
+    assessment_id: str = Form(...),
+    subject_id: str = Form(...),
+    name: str = Form(...),
+    due_date: str = Form(...),
+    published_date: str = Form(...),
+    status: str = Form(...),
+    assessment_type: str = Form(...),
+    file_name: str = Form(...),  # <-- Accept file name only
+    db: Session = Depends(get_db),
+):
+
+    # Convert string dates to datetime objects
+    try:
+        due_dt = datetime.strptime(due_date, "%Y-%m-%dT%H:%M:%S.%f")
+        pub_dt = datetime.strptime(published_date, "%Y-%m-%dT%H:%M:%S.%f")
+    except ValueError as e:
+        logging.error(f"Date parsing error: {e}")
+        raise HTTPException(status_code=400, detail="Invalid date format")
+
+    # Create new assessment record
+    new_assessment = Assessment(
+        assessment_id=assessment_id,
+        subject_id=subject_id,
+        name=name,
+        due_date=due_dt,
+        published_date=pub_dt,
+        status=status,
+        assessment_type=assessment_type,
+        file_path=file_name  # Save file name as a path format
+    )
+
+    try:
+        db.add(new_assessment)
+        db.commit()
+        db.refresh(new_assessment)
+        return {"message": "Assessment created successfully", "id": assessment_id}
+
+    except Exception as e:
+        logging.error(f"Database error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/add_exam")
+def create_exam(
+    assessment_id: str = Form(...),
+    subject_id: str = Form(...),
+    name: str = Form(...),
+    due_date: str = Form(...),
+    published_date: str = Form(...),
+    status: str = Form(...),
+    assessment_type: str = Form(...),
+    file_name: str = Form(...),  # <-- Accept file name only
+    db: Session = Depends(get_db),
+):
+
+    # Convert string dates to datetime objects
+    try:
+        due_dt = datetime.strptime(due_date, "%Y-%m-%dT%H:%M:%S.%f")
+        pub_dt = datetime.strptime(published_date, "%Y-%m-%dT%H:%M:%S.%f")
+    except ValueError as e:
+        logging.error(f"Date parsing error: {e}")
+        raise HTTPException(status_code=400, detail="Invalid date format")
+
+    # Create new assessment record
+    new_assessment = Assessment(
+        assessment_id=assessment_id,
+        subject_id=subject_id,
+        name=name,
+        due_date=due_dt,
+        published_date=pub_dt,
+        status=status,
+        assessment_type=assessment_type,
+        file_path=file_name  # Save file name as a path format
+    )
+
+    try:
+        db.add(new_assessment)
+        db.commit()
+        db.refresh(new_assessment)
+        return {"message": "Assessment created successfully", "id": assessment_id}
+
+    except Exception as e:
+        logging.error(f"Database error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.delete("/delete_assignment/{subject_id}/{assignment_name}")
+async def delete_assignment(subject_id: str, assignment_name: str, db: Session = Depends(get_db)):
+    # Query the assignment to check if it exists
+    assignment = db.query(Assessment).filter(
+        Assessment.subject_id == subject_id,
+        Assessment.name == assignment_name,
+        Assessment.assessment_type == "Assignment"
+    ).first()
+
+    # If the assignment exists, delete it
+    if assignment:
+        db.delete(assignment)
+        db.commit()
+        return {"message": f"Assignment '{assignment_name}' deleted successfully"}
+    
+    # Raise an exception if the assignment is not found
+    raise HTTPException(status_code=404, detail="Assignment not found")
+
+@app.delete("/delete_exam/{subject_id}/{exam_name}")
+async def delete_exam(subject_id: str, exam_name: str, db: Session = Depends(get_db)):
+    exam = db.query(Assessment).filter(
+        Assessment.subject_id == subject_id,
+        Assessment.name == exam_name,
+        Assessment.assessment_type == "Exam"
+    ).first()
+
+    if exam:
+        db.delete(exam)
+        db.commit()
+        return {"message": f"Exam '{exam_name}' deleted successfully"}
+    
+    raise HTTPException(status_code=404, detail="Exam not found")
+
+@app.delete("/delete_quiz/{subject_id}/{quiz_name}")
+async def delete_quiz(subject_id: str, quiz_name: str, db: Session = Depends(get_db)):
+    quiz = db.query(Assessment).filter(
+        Assessment.subject_id == subject_id,
+        Assessment.name == quiz_name,
+        Assessment.assessment_type == "Quiz"
+    ).first()
+
+    if quiz:
+        db.delete(quiz)
+        db.commit()
+        return {"message": f"Quiz '{quiz_name}' deleted successfully"}
+    
+    raise HTTPException(status_code=404, detail="Quiz not found")
+
+@app.get("/get_assignments/{subject_id}")
+async def get_assignments(subject_id: str, db: Session = Depends(get_db)):
+    try:
+        # Query to get assignments by subject_id where assessment_type is "Assignment"
+        assignments = db.query(Assessment).filter(
+            Assessment.subject_id == subject_id, 
+            Assessment.assessment_type == "Assignment"
+        ).all()
+
+        # Extract only the necessary fields (name, due_date, file_path)
+        assignment_list = [{"name": assignment.name, "due_date": assignment.due_date, "file_path": assignment.file_path} for assignment in assignments]
+
+        return {"assignments": assignment_list}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving assignments: {str(e)}")
+
+@app.get("/get_quizs/{subject_id}")
+async def get_quizs(subject_id: str, db: Session = Depends(get_db)):
+    try:
+
+        quizs = db.query(Assessment).filter(
+            Assessment.subject_id == subject_id, 
+            Assessment.assessment_type == "Quiz"
+        ).all()
+
+        # Extract only the necessary fields (name, due_date, file_path)
+        quiz_list = [{"name": quiz.name, "due_date": quiz.due_date, "file_path": quiz.file_path} for quiz in quizs]
+
+        return {"quizs": quiz_list}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving quizs: {str(e)}")
+
+
+@app.get("/get_exams/{subject_id}")
+async def get_exams(subject_id: str, db: Session = Depends(get_db)):
+    try:
+
+        exams = db.query(Assessment).filter(
+            Assessment.subject_id == subject_id, 
+            Assessment.assessment_type == "Exam"
+        ).all()
+
+        # Extract only the necessary fields (name, due_date, file_path)
+        exam_list = [{"name": exam.name, "due_date": exam.due_date, "file_path": exam.file_path} for exam in exams]
+
+        return {"exams": exam_list}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving exams: {str(e)}")
+
+@app.get("/get_file_ass/{subject_id}/{name}")
+def get_file_assignment(subject_id: str, name: str, db: Session = Depends(get_db)):
+    try:
+        assessment = db.query(Assessment).filter(
+            Assessment.subject_id == subject_id,
+            Assessment.name == name,
+            Assessment.assessment_type == "Assignment"  # Ensure it's an assignment
+        ).first()
+
+        if assessment is None:
+            raise HTTPException(status_code=404, detail="Assignment not found")
+
+        # Return both file path and due date (format date to string if needed)
+        return {
+            "file_path": assessment.file_path,
+            "due_date": assessment.due_date.strftime("%Y-%m-%d")
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving assignment details: {str(e)}")
+
+@app.get("/get_file_exam/{subject_id}/{name}")
+def get_file_exam(subject_id: str, name: str, db: Session = Depends(get_db)):
+    try:
+        assessment = db.query(Assessment).filter(
+            Assessment.subject_id == subject_id,
+            Assessment.name == name,
+            Assessment.assessment_type == "Exam"  # Ensure it's an assignment
+        ).first()
+
+        if assessment is None:
+            raise HTTPException(status_code=404, detail="Assignment not found")
+
+        # Return both file path and due date (format date to string if needed)
+        return {
+            "file_path": assessment.file_path,
+            "due_date": assessment.due_date.strftime("%Y-%m-%d")
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving assignment details: {str(e)}")
+
+
+@app.get("/get_file_quiz/{subject_id}/{name}")
+def get_file_quiz(subject_id: str, name: str, db: Session = Depends(get_db)):
+    try:
+        assessment = db.query(Assessment).filter(
+            Assessment.subject_id == subject_id,
+            Assessment.name == name,
+            Assessment.assessment_type == "Quiz"  # Ensure it's an assignment
+        ).first()
+
+        if assessment is None:
+            raise HTTPException(status_code=404, detail="Assignment not found")
+
+        # Return both file path and due date (format date to string if needed)
+        return {
+            "file_path": assessment.file_path,
+            "due_date": assessment.due_date.strftime("%Y-%m-%d")
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving assignment details: {str(e)}")
+
+
+@app.get("/get_assessment_id/{subject_id}/{assessment_name}")
+def get_assessment_id(subject_id: str, assessment_name: str, db: Session = Depends(get_db)):
+    try:
+        # Query to get the assessment by subject_id and name
+        assessment = db.query(Assessment).filter(
+            Assessment.subject_id == subject_id,
+            Assessment.name == assessment_name
+        ).first()
+
+        if not assessment:
+            raise HTTPException(status_code=404, detail="Assessment not found")
+
+        return {"assessment_id": assessment.assessment_id}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving assessment_id: {str(e)}")
+
+@app.post("/submit_assignment/")
+def create_assignment(
+    submission_id: str = Form(...),
+    assessment_id: str = Form(...),
+    student_id: str = Form(...),
+    file_path: str = Form(...),
+    submitted_time: str = Form(...),
+    last_modified: str = Form(...),
+    status: str = Form(...),
+    db: Session = Depends(get_db),
+):
+
+    os.makedirs
+
+    try:
+        psub_t = datetime.strptime(submitted_time, "%Y-%m-%dT%H:%M:%S.%f")
+    except ValueError as e:
+        logging.error(f"Date parsing error: {e}")
+        raise HTTPException(status_code=400, detail="Invalid date format")
+
+    # Create new assessment record
+    new_submission = Submission(
+        submission_id=submission_id,  # Correct the typo here
+        assessment_id=assessment_id,
+        student_id=student_id,
+        file_path=file_path,  # Path to the file
+        submitted_time=submitted_time,
+        last_modified=last_modified,
+        status=status
+    )
+
+    try:
+        db.add(new_submission)
+        db.commit()
+        db.refresh(new_submission)
+        return {"message": "Success submittion", "id": submission_id}
+
+    except Exception as e:
+        logging.error(f"Database error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.get("/get_submission_file/{submission_id}")
+def get_submission_file(submission_id: str, db: Session = Depends(get_db)):
+    submission = db.query(Submission).filter(Submission.submission_id == submission_id).first()
+
+    if submission is None:
+        raise HTTPException(status_code=404, detail="Submission not found")
+    
+    # Return the file path from the submission
+    return {"file_path": submission.file_path}
+
+
+@app.post("/submit_exam/")
+def create_assignment(
+    submission_id: str = Form(...),
+    assessment_id: str = Form(...),
+    student_id: str = Form(...),
+    file_path: str = Form(...),
+    submitted_time: str = Form(...),
+    last_modified: str = Form(...),
+    status: str = Form(...),
+    db: Session = Depends(get_db),
+):
+
+    try:
+        psub_t = datetime.strptime(submitted_time, "%Y-%m-%dT%H:%M:%S.%f")
+    except ValueError as e:
+        logging.error(f"Date parsing error: {e}")
+        raise HTTPException(status_code=400, detail="Invalid date format")
+
+    # Create new assessment record
+    new_submission = Submission(
+        submission_id=submission_id,  # Correct the typo here
+        assessment_id=assessment_id,
+        student_id=student_id,
+        file_path=file_path,  # Path to the file
+        submitted_time=submitted_time,
+        last_modified=last_modified,
+        status=status
+    )
+
+    try:
+        db.add(new_submission)
+        db.commit()
+        db.refresh(new_submission)
+        return {"message": "Success submittion", "id": submission_id}
+
+    except Exception as e:
+        logging.error(f"Database error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.get("/get_submission_file/{submission_id}")
+def get_submission_file(submission_id: str, db: Session = Depends(get_db)):
+    submission = db.query(Submission).filter(Submission.submission_id == submission_id).first()
+
+    if submission is None:
+        raise HTTPException(status_code=404, detail="Submission not found")
+    
+    # Return the file path from the submission
+    return {"file_path": submission.file_path}
+
+@app.get("/get_submissions/{assessment_id}")
+def get_submissions_by_assessment(assessment_id: str, db: Session = Depends(get_db)):
+    submissions = db.query(Submission).filter(Submission.assessment_id == assessment_id).all()
+
+    if not submissions:
+        return {"submissions": []}
+
+    result = [
+        {
+            "student_id": submission.student_id,
+            "file_path": submission.file_path
+        }
+        for submission in submissions
+    ]
+    return {"submissions": result}
+
+@app.get("/get_assessment_id/{subject_id}/{name}")
+def get_exam_id(subject_id: str, name: str, db: Session = Depends(get_db)):
+    # Query the database for the specific exam
+    exam = db.query(Assessment).filter(
+        Assessment.subject_id == subject_id,
+        Assessment.name == name,
+        Assessment.assessment_type == "Exam"
+    ).first()
+
+    if not exam:
+        raise HTTPException(status_code=404, detail="Exam not found")
+
+    # Return the assessment ID if found
+    return {"assessment_id": exam.assessment_id}
